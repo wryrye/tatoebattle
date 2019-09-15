@@ -7,6 +7,8 @@ import { withRouter } from 'react-router-dom'
 window.$ = window.jQuery = require("jquery");
 require('jquery-textfill/source/jquery.textfill.min.js');
 
+var SineWaves = require('sine-waves/sine-waves.min.js');
+
 class Room extends React.Component {
   constructor(props) {
     super(props);
@@ -145,6 +147,8 @@ class Room extends React.Component {
       }
     });
 
+    this.initWaves();
+
     /** eye candy **/
     var step = parseFloat($('#waves1').css("width")) / 10;
     var waves1_width = parseFloat($('#waves1').css("width"));
@@ -166,6 +170,172 @@ class Room extends React.Component {
       }, 3000, function () {
       });
     }
+  }
+
+  initWaves() {
+    var div = 1;
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      div = 2;
+    }
+
+    var waves1 = new SineWaves({
+      el: document.getElementById('waves1'),
+
+      speed: 30,
+
+      width: function () {
+        return $('#container1').width();
+      },
+
+      height: function () {
+        return $('#container1').height() / div;
+      },
+
+      ease: 'SineInOut',
+
+      wavesWidth: '100%',
+
+      waves: [
+        {
+          timeModifier: 4,
+          lineWidth: 1,
+          amplitude: -25,
+          wavelength: 25
+        },
+        {
+          timeModifier: 2,
+          lineWidth: 2,
+          amplitude: -40,
+          wavelength: 50
+        },
+        {
+          timeModifier: 1,
+          lineWidth: 1,
+          amplitude: -60,
+          wavelength: 100
+        },
+        {
+          timeModifier: 0.5,
+          lineWidth: 1,
+          amplitude: -75,
+          wavelength: 200
+        },
+        {
+          timeModifier: 0.25,
+          lineWidth: 2,
+          amplitude: -100,
+          wavelength: 400
+        }
+      ],
+
+      // Called on window resize
+      resizeEvent: function () {
+        var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
+        gradient.addColorStop(0, "rgba(255, 0, 0, 0.2)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, 1)");
+        gradient.addColorStop(1, "rgba(255, 0, 0, 0.2)");
+
+        var index = -1;
+        var length = this.waves.length;
+        while (++index < length) {
+          this.waves[index].strokeStyle = gradient;
+        }
+
+        // Clean Up
+        index = void 0;
+        length = void 0;
+        gradient = void 0;
+      }
+    });
+
+    var waves2 = new SineWaves({
+      el: document.getElementById('waves2'),
+
+      speed: 30,
+
+      width: function () {
+        return $('#container2').width();
+      },
+
+      height: function () {
+        return $('#container2').height() / div;
+      },
+
+      ease: 'SineInOut',
+
+      wavesWidth: '100%',
+
+      waves: [
+        {
+          timeModifier: 4.2,
+          lineWidth: 1,
+          amplitude: 25,
+          wavelength: 25
+        },
+        {
+          timeModifier: 2.2,
+          lineWidth: 2,
+          amplitude: 40,
+          wavelength: 50
+        },
+        {
+          timeModifier: 1.2,
+          lineWidth: 1,
+          amplitude: 60,
+          wavelength: 100
+        },
+        {
+          timeModifier: 0.52,
+          lineWidth: 1,
+          amplitude: 75,
+          wavelength: 200
+        },
+        {
+          timeModifier: 0.252,
+          lineWidth: 2,
+          amplitude: 100,
+          wavelength: 400
+        }
+      ],
+
+      // Called on window resize
+      resizeEvent: function () {
+        var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
+        gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, 1)");
+        gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
+
+        var index = -1;
+        var length = this.waves.length;
+        while (++index < length) {
+          this.waves[index].strokeStyle = gradient;
+        }
+
+        // Clean Up
+        index = void 0;
+        length = void 0;
+        gradient = void 0;
+      }
+    });
+
+    var resizeWave = function (wave, width) {
+      var gradient = wave.ctx.createLinearGradient(0, 0, width, 0);
+      gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
+      gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)");
+      gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
+
+      var index = -1;
+      var length = wave.waves.length;
+      while (++index < length) {
+        wave.waves[index].strokeStyle = gradient;
+      }
+
+      // Clean Up
+      index = void 0;
+      length = void 0;
+      gradient = void 0;
+    }
+
   }
 
 
