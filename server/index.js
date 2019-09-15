@@ -70,6 +70,7 @@ io.on('connection', function(socket){
   /** when both ready, start game **/
   socket.on('ready-start', function(req){
     console.log("\x1b[35m", "LOG: " + "client " + socket.id + " is ready")
+    console.log(JSON.stringify(req))
     lobbies[req.lobby].players.push(req.player);
     if(lobbies[req.lobby].players.length == 2){
       console.log("LOG: " + "start game")

@@ -2,10 +2,13 @@ import React from "react";
 import './Lobby.css'
 import socketClient from "socket.io-client";
 import $ from "jquery"
+import { withRouter } from 'react-router-dom'
 
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
+
+    console.log(this.props)
 
     this.username = "test";
     this.avatar = "jackie";
@@ -41,8 +44,9 @@ class Lobby extends React.Component {
         socket.emit('request-join', $(this).attr('id'));
     });
 
-    socket.on('accept-join', function(obj){
-      window.location.replace("/room/"+obj['lobby']+"/"+obj['player']); //redirect to lobby
+    socket.on('accept-join', (data) => {
+      this.props.update(data);
+      this.props.history.push('/room')
     });
   }
 
@@ -105,4 +109,4 @@ class Lobby extends React.Component {
   }
 }
 
-export default Lobby;
+export default withRouter(Lobby);
