@@ -63,7 +63,7 @@ io.on('connection', function(socket){
     if(lobbies[lobby].count++ < 2){
       console.log("\x1b[35m", "LOG: " + "a player has joined " + lobby)
       // lobbies[lobby].count++;
-      socket.emit('accept-join', {'lobby':lobby, 'player': lobbies[lobby].count});
+      socket.emit('accept-join', {'room':lobby, 'player': lobbies[lobby].count});
     }
   });
 

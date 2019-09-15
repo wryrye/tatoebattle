@@ -3,28 +3,31 @@ import './Lobby.css'
 import socketClient from "socket.io-client";
 import $ from "jquery"
 import { withRouter } from 'react-router-dom'
+import Login from './Login'
 
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(this.props)
-
     this.username = "test";
     this.avatar = "jackie";
-    document.cookie = JSON.stringify({
-      uname: this.username,
-      master: this.avatar,
-    });
 
     this.state = {
-      socketServer: "http://127.0.0.1:3045"
+      socketServer: "http://127.0.0.1:3045",
     };
   }
 
   componentDidMount() {
     const { socketServer } = this.state;
     const socket = socketClient(socketServer);
+
+    let registered = document.cookie !== ''
+    if(!registered) {
+      console.log("not registered!");
+      $('#exampleModalLong').modal('show');
+    } else {
+      this.props.update(document.cookie)
+    }
     
     socket.emit('lobby-info');
     socket.on('lobby-info', function (lobbies) {
@@ -51,8 +54,11 @@ class Lobby extends React.Component {
   }
 
   render() {
+    // const { showModal } = this.state;
+
     return (
       <div>
+        <Login update={this.props.update}/>
         <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
           <a className="navbar-brand" href="lobby">翻译战争</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">

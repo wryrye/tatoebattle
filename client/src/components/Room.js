@@ -57,11 +57,7 @@ class Room extends React.Component {
     var me = player === 1 ? 1 : 2;
     var opp = player === 1 ? 2 : 1;
 
-    console.log("master:" + master);
-    import(`../assets/images/${master}.png`).then((image) => {
-      $('#player' + me).attr("src", image.default);
-    });
-
+    $('#player' + me).attr('src', `./assets/images/${master}.png`);
 
     socket.on('connect', function () {
       var req = {
@@ -340,12 +336,16 @@ class Room extends React.Component {
 
 
   render() {
+    const { room, player } = this.props;
+
     return (
       <div>
-        <div id="p1">P1</div>
-        <div id="p2">P2</div>
+        {player === 1 ?
+        <div id="p1">P1</div> :
+        <div id="p2">P2</div>}
 
-        <h2 id='room' >MY ROOM</h2>
+        <h2 id='room' >{room}</h2>
+
         <img id="player1" src="" alt="" />
         <img id="player2" src="" alt="" />
         <span id="container1">
@@ -360,7 +360,7 @@ class Room extends React.Component {
           <div className="textfill"><span id="eng-sent"></span></div>
           <div className="textfill"><span id="chin-sent"></span></div>
           <div className="input-group p-3">
-            <input id="text-input" name="searchtext" value="" className="form-control" type="text" />
+            <input id="text-input" name="searchtext" className="form-control" type="text" />
             <span className="input-group-btn">
               <button className="btn btn-default" type="submit" id="submit-guess">输入</button>
             </span>
