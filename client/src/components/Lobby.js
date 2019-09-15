@@ -1,7 +1,51 @@
 import React from "react";
 import './Lobby.css'
+import socketClient from "socket.io-client";
+import $ from "jquery"
 
 class Lobby extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.username = "test";
+    this.avatar = "jackie";
+    document.cookie = JSON.stringify({
+      uname: this.username,
+      master: this.avatar,
+    });
+
+    this.state = {
+      socketServer: "http://127.0.0.1:3045"
+    };
+  }
+
+  componentDidMount() {
+    const { socketServer } = this.state;
+    const socket = socketClient(socketServer);
+    
+    socket.emit('lobby-info');
+    socket.on('lobby-info', function (lobbies) {
+      for (var lobby in lobbies) {
+        if (lobbies.hasOwnProperty(lobby)) {
+          if (lobbies[lobby].count === 0) {
+            $('#' + lobby).removeClass("disabled");
+          }
+          else if (lobbies[lobby].count === 1) {
+            $('#' + lobby).removeClass("disabled");
+          }
+        }
+      }
+    });
+
+    $('.battle').click(function(){
+        socket.emit('request-join', $(this).attr('id'));
+    });
+
+    socket.on('accept-join', function(obj){
+      window.location.replace("/room/"+obj['lobby']+"/"+obj['player']); //redirect to lobby
+    });
+  }
+
   render() {
     return (
       <div>
@@ -14,10 +58,10 @@ class Lobby extends React.Component {
           <div className="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="#">大唐 <span className="sr-only">(current)</span></a>
+                <a className="nav-link" href="lobby">大唐 <span className="sr-only">(current)</span></a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">奖牌榜</a>
+                <a className="nav-link" href="lobby">奖牌榜</a>
               </li>
             </ul>
           </div>
@@ -27,33 +71,32 @@ class Lobby extends React.Component {
           <div className="container">
             <div className="row mt-3">
               <div className="col-sm-4 mt-3">
-                <div className="card p-2" style={{width: "100%"}}>
+                <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
                     <h4 className="card-title">北京</h4>
                     <p className="card-text">北京</p>
-                    <a id="北京" href="#" className="battle btn btn-primary disabled">挑战</a>
+                    <button id="北京" className="battle btn btn-primary disabled">挑战</button>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-3">
-                <div className="card p-2" style={{width: "100%"}}>
+                <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
                     <h4 className="card-title">香港</h4>
                     <p className="card-text">香港</p>
-                    <a id="香港" href="#" className="battle btn btn-primary disabled">挑战</a>
+                    <button id="香港" className="battle btn btn-primary disabled">挑战</button>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-3">
-                <div className="card p-2" style={{width: "100%"}}>
+                <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
                     <h4 className="card-title">苏州</h4>
                     <p className="card-text">苏州</p>
-                    <a id="苏州" href="#" className="battle btn btn-primary disabled">挑战</a>
+                    <button id="苏州" className="battle btn btn-primary disabled">挑战</button>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </main>
