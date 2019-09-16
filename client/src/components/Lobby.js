@@ -10,7 +10,7 @@ class Lobby extends React.Component {
     super(props);
 
     this.state = {
-      socketServer: "http://127.0.0.1:3045",
+      socketServer: process.env.REACT_APP_SOCKET,
     };
   }
 

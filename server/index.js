@@ -1,18 +1,22 @@
-// var redis = require("redis"),
-// redis_client = redis.createClient(process.env.REDIS_URL);
+// redis server
 
-// rand_start = parseInt(Math.random() *20000)
-// redis_client.lrange(rand_start++,0,3, (err, data)=>{
-//   if(err){
-//     throw err;
-//   }
-//   console.log(data);
-// });
+var redis = require("redis"),
+redis_client = redis.createClient(process.env.REDIS_URL);
+
+rand_start = parseInt(Math.random() *20000)
+redis_client.lrange(rand_start++,0,3, (err, data)=>{
+  if(err){
+    throw err;
+  }
+  console.log(data);
+});
+
+// websocket server
 
 const io = require('socket.io')();
 
-function resetRoom(lobby) {
-  rooms[lobby] = {
+function resetRoom(room) {
+  rooms[room] = {
     'count': 0,
     'ready': 0,
     'players': [],
@@ -78,10 +82,10 @@ io.on('connection', function (socket) {
 
       /** end game if either player stops responding to heartbeat **/
       var heartbeat = setInterval(function ping() {
-        rooms[data.lobby].players.forEach(function each(player) {
+        rooms[data.room].players.forEach(function each(player) {
           if (!io.sockets.connected[player.socket]) {
-            io.emit(data.lobby, { 'op': 5 });
-            resetRoom(data.lobby);
+            io.emit(data.room, { 'op': 5 });
+            resetRoom(data.room);
             clearInterval(heartbeat);
           }
         });
@@ -91,52 +95,52 @@ io.on('connection', function (socket) {
   });
 
   /** share players' information with eachother **/
-  function startGame(lobby) {
-    io.emit(lobby, { 'op': 4, 'players': rooms[lobby].players });
-    nextRound(lobby);
+  function startGame(room) {
+    io.emit(room, { 'op': 4, 'players': rooms[room].players });
+    nextRound(room);
   }
 
-  socket.on('ready-next', function (lobby) {
-    if (++rooms[lobby].ready == 2) {
+  socket.on('ready-next', function (room) {
+    if (++rooms[room].ready == 2) {
       console.log("LOG: " + "next round")
-      rooms[lobby].ready = 0
-      nextRound(lobby)
+      rooms[room].ready = 0
+      nextRound(room)
     }
   });
 
   /** each round provides a new sentence **/
-  function nextRound(lobby) {
+  function nextRound(room) {
     redis_client.lrange(rand_start++, 0, 3, (err, data) => {
       if (err) { throw err; }
-      rooms[lobby].currSent = data[1];
-      io.emit(lobby, { 'op': 0, 'sent': data[2] });
+      rooms[room].currSent = data[1];
+      io.emit(room, { 'op': 0, 'sent': data[2] });
     });
   }
 
   /** listen for guess from client **/
   socket.on('submit-guess', function (obj) { //user submits guess
-    result = testGuess(rooms[obj.lobby].currSent, obj.guess)
-    if (rooms[obj.lobby].first == null) { // first user to answer gets preliminary results
+    result = testGuess(rooms[obj.room].currSent, obj.guess)
+    if (rooms[obj.room].first == null) { // first user to answer gets preliminary results
       is_p1 = obj.player == 1;
-      prev_score = rooms[obj.lobby].score
+      prev_score = rooms[obj.room].score
       points = is_p1 ? result.points : -result.points;
-      rooms[obj.lobby].score += points;
-      rooms[obj.lobby].first = points
-      socket.emit(obj.lobby, { 'op': 1, 'sent': result.sent, 'points': points });
+      rooms[obj.room].score += points;
+      rooms[obj.room].first = points
+      socket.emit(obj.room, { 'op': 1, 'sent': result.sent, 'points': points });
     } else {
       is_p1 = obj.player == 1;
-      prev_score = rooms[obj.lobby].score;
+      prev_score = rooms[obj.room].score;
       points = is_p1 ? result.points : -result.points;
-      rooms[obj.lobby].score += points;
-      score = rooms[obj.lobby].score;
+      rooms[obj.room].score += points;
+      score = rooms[obj.room].score;
       // console.log(score)
       if (score >= 10 || score <= -10) { //if a winning score has been reached, game over!
         winner = score >= 10 ? 1 : 2;
-        io.emit(obj.lobby, { 'op': 3, 'sent': result.sent, 'points': points + rooms[obj.lobby].first, "winner": winner });
-        resetRoom(obj.lobby);
+        io.emit(obj.room, { 'op': 3, 'sent': result.sent, 'points': points + rooms[obj.room].first, "winner": winner });
+        resetRoom(obj.room);
       } else { //both players get final results
-        io.emit(obj.lobby, { 'op': 2, 'sent': result.sent, 'points': points + rooms[obj.lobby].first });
-        rooms[obj.lobby].first = null
+        io.emit(obj.room, { 'op': 2, 'sent': result.sent, 'points': points + rooms[obj.room].first });
+        rooms[obj.room].first = null
       }
 
     }

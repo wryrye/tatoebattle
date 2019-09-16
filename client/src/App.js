@@ -17,7 +17,8 @@ class App extends React.Component {
       isReady: false
     }
 
-    this.socketServer = "http://127.0.0.1:3045"
+    this.socketServer = process.env.REACT_APP_SOCKET;
+    console.log(this.socketServer);
 
     this.data = {
       username: null,

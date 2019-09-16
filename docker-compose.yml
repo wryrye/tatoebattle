@@ -1,0 +1,47 @@
+version: "3"
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile.python
+    # image: python:3.7
+    container_name: python
+    volumes:
+      - ./python:/app
+    command: /bin/sh -c "cd /app && python redis-ingest.py"
+    environment:
+    - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  server:
+    image: node:carbon
+    container_name: server
+    volumes:
+      - ./server:/app
+    ports:
+      - "3045:3045"
+    command: bash -c "cd /app && npm install && node index.js"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - python
+
+  client:
+    image: node:carbon
+    container_name: client
+    volumes:
+      - ./client:/app
+    ports:
+      - "5663:3000"
+    command: bash -c "cd /app && npm install && npm start"
+    environment:
+      - REACT_APP_SOCKET=127.0.0.1:3045
+    depends_on:
+      - server
+
+

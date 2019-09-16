@@ -15,7 +15,7 @@ class Room extends React.Component {
     super(props);
 
     this.state = {
-      socketServer: "http://127.0.0.1:3045"
+      socketServer: process.env.REACT_APP_SOCKET
     };
   }
 
@@ -79,7 +79,7 @@ class Room extends React.Component {
     /** submits guess  **/
     $('#submit-guess').click(function () {
       $(this).prop("disabled", true);
-      socket.emit('submit-guess', { "lobby": room, "player": "<%= player %>", "guess": $("#text-input").val() });
+      socket.emit('submit-guess', { "room": room, "player": "<%= player %>", "guess": $("#text-input").val() });
       $("#text-input").val('');
     });
 
