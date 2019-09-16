@@ -9,9 +9,6 @@ class Lobby extends React.Component {
   constructor(props) {
     super(props);
 
-    this.username = "test";
-    this.avatar = "jackie";
-
     this.state = {
       socketServer: "http://127.0.0.1:3045",
     };
@@ -49,12 +46,11 @@ class Lobby extends React.Component {
 
     socket.on('accept-join', (data) => {
       this.props.update(data);
-      this.props.history.push('/room')
+      this.props.history.push(`/room/${data.room}/${data.player}`)
     });
   }
 
   render() {
-    // const { showModal } = this.state;
 
     return (
       <div>

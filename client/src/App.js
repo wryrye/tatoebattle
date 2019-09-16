@@ -13,29 +13,38 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isReady: false
+    }
+
     this.socketServer = "http://127.0.0.1:3045"
 
     this.data = {
-      username: undefined,
-      avatar: undefined,
-      room: undefined,
-      player: undefined
+      username: null,
+      master: null,
+      room: null,
+      player: null
     }
 
     this.update = this.update.bind(this);
+
+    if (document.cookie) {
+      this.update(JSON.parse(document.cookie));
+    }
   }
 
-  update(data){
+  update(data) {
     console.log("Updating data: " + JSON.stringify(data));
     Object.assign(this.data, data)
   }
 
   render() {
+    console.log(this.data)
     return (
       <Router>
         <Switch>
-          <Route path="/lobby" exact render={(props) => <Lobby {...props} update={this.update} /> } />
-          <Route path="/room/" render={(props) => <Room {...props} avatar={this.data.avatar} room={this.data.room} player={this.data.player} /> } />
+          <Route path="/lobby" exact render={(props) => <Lobby {...props} update={this.update} />} />
+          <Route path="/room/" render={(props) => <Room {...props} master={this.data.master} room={this.data.room} player={this.data.player} />} />
           <Redirect to="/lobby" />
         </Switch>
       </Router>

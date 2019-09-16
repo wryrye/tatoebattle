@@ -31,7 +31,7 @@ class Login extends React.Component {
       if($("#m").val() != ""){
         let cookie = {
           username:$("#m").val(),
-          avatar:$(".selected").attr('title'),
+          master:$(".selected").attr('title'),
         }
         document.cookie = JSON.stringify(cookie);
         this.props.update(cookie)

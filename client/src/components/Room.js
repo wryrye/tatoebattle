@@ -3,6 +3,7 @@ import './Room.css'
 import socketClient from "socket.io-client";
 import $ from "jquery"
 import { withRouter } from 'react-router-dom'
+import queryParser from 'query-string';
 
 window.$ = window.jQuery = require("jquery");
 require('jquery-textfill/source/jquery.textfill.min.js');
@@ -13,9 +14,6 @@ class Room extends React.Component {
   constructor(props) {
     super(props);
 
-    this.username = "test";
-    this.avatar = "jackie";
-
     this.state = {
       socketServer: "http://127.0.0.1:3045"
     };
@@ -25,9 +23,14 @@ class Room extends React.Component {
     const { socketServer } = this.state;
     const socket = socketClient(socketServer);
 
-    var room = this.props.room;
-    var player = this.props.player;
-    var master = this.props.avatar;
+    let { room, player, master } = this.props;
+
+    if (!room || !player || !master) {
+      let queryString = this.props.location.search;
+      let queryObject = queryParser.parse(queryString);
+      this.props = queryObject;
+      console.log(this.props);
+    }
 
 
     /** mobile-friendly **/
@@ -57,20 +60,20 @@ class Room extends React.Component {
     var me = player === 1 ? 1 : 2;
     var opp = player === 1 ? 2 : 1;
 
-    $('#player' + me).attr('src', `./assets/images/${master}.png`);
+    $('#player' + me).attr('src', `/assets/images/${master}.png`);
 
     socket.on('connect', function () {
-      var req = {
-        'lobby': room,
+      var data = {
+        'room': room,
         'player': {
           'uname': uname,
           'master': master,
           'socket': socket.id,
-          'player': '<%= player %>',
+          'player': player,
           'test': "ugh"
         }
       }
-      socket.emit('ready-start', req);
+      socket.emit('ready-start', data);
     });
 
     /** submits guess  **/
@@ -337,6 +340,7 @@ class Room extends React.Component {
 
   render() {
     const { room, player } = this.props;
+    console.log(room)
 
     return (
       <div>

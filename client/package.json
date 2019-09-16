@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "i": "^0.3.6",
     "jquery": "^3.4.1",
     "jquery-textfill": "^0.6.0",
+    "npm": "^6.11.3",
     "popper.js": "^1.15.0",
+    "query-string": "^6.8.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
