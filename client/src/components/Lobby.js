@@ -19,20 +19,6 @@ class Lobby extends React.Component {
     } else {
       updateInfo(document.cookie)
     }
-    
-    socket.emit('lobby-info');
-    socket.on('lobby-info', function (lobbies) {
-      for (var lobby in lobbies) {
-        if (lobbies.hasOwnProperty(lobby)) {
-          if (lobbies[lobby].count === 0) {
-            $('#' + lobby).removeClass("disabled");
-          }
-          else if (lobbies[lobby].count === 1) {
-            $('#' + lobby).removeClass("disabled");
-          }
-        }
-      }
-    });
 
     $('.battle').click(function(){
         socket.emit('request-join', $(this).attr('id'));
@@ -73,27 +59,27 @@ class Lobby extends React.Component {
               <div className="col-sm-4 mt-3">
                 <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
-                    <h4 className="card-title">北京</h4>
-                    <p className="card-text">北京</p>
-                    <button id="北京" className="battle btn btn-primary disabled">挑战</button>
+                    <h4 className="card-title">Random</h4>
+                    <p className="card-text">Play against some rando</p>
+                    <button id="北京" className="battle btn btn-primary">挑战</button>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-3">
                 <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
-                    <h4 className="card-title">香港</h4>
-                    <p className="card-text">香港</p>
-                    <button id="香港" className="battle btn btn-primary disabled">挑战</button>
+                    <h4 className="card-title">Google</h4>
+                    <p className="card-text">Play against Google</p>
+                    <button id="香港" className="battle btn btn-primary">挑战</button>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-3">
                 <div className="card p-2" style={{ width: "100%" }}>
                   <div className="card-block">
-                    <h4 className="card-title">苏州</h4>
-                    <p className="card-text">苏州</p>
-                    <button id="苏州" className="battle btn btn-primary disabled">挑战</button>
+                    <h4 className="card-title">Baidu</h4>
+                    <p className="card-text">Play against Baidu</p>
+                    <button id="苏州" className="battle btn btn-primary">挑战</button>
                   </div>
                 </div>
               </div>
