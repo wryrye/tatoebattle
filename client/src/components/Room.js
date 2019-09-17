@@ -53,6 +53,7 @@ class Room extends React.Component {
     var opp = player === 1 ? 2 : 1;
 
     $('#player' + me).attr('src', `/assets/images/${master}.png`);
+    
 
     var data = {
       'room': room,
@@ -78,7 +79,7 @@ class Room extends React.Component {
     socket.on(room, function (obj) {
       switch (obj.op) {
         case 4: //get other players info
-          $('#player' + opp).attr("src", "/images/" + obj.players[parseInt(opp) - 1].master + ".png");
+          $('#player' + opp).attr("src", `/assets/images/${obj.players[parseInt(opp) - 1].master}.png`);
           break;
         case 0: //next round
           enSent.removeClass("loading");
