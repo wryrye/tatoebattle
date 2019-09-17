@@ -1,6 +1,5 @@
 import React from "react";
 import './Room.css'
-import socketClient from "socket.io-client";
 import $ from "jquery"
 import { withRouter } from 'react-router-dom'
 import queryParser from 'query-string';
@@ -11,19 +10,12 @@ require('jquery-textfill/source/jquery.textfill.min.js');
 var SineWaves = require('sine-waves/sine-waves.min.js');
 
 class Room extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      socketServer: process.env.REACT_APP_SOCKET
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount() {
-    const { socketServer } = this.state;
-    const socket = socketClient(socketServer);
-
-    let { room, player, master } = this.props;
+    const { socket, room, player, master } = this.props;
 
     if (!room || !player || !master) {
       let queryString = this.props.location.search;
@@ -62,19 +54,17 @@ class Room extends React.Component {
 
     $('#player' + me).attr('src', `/assets/images/${master}.png`);
 
-    socket.on('connect', function () {
-      var data = {
-        'room': room,
-        'player': {
-          'uname': uname,
-          'master': master,
-          'socket': socket.id,
-          'player': player,
-          'test': "ugh"
-        }
+    var data = {
+      'room': room,
+      'player': {
+        'uname': uname,
+        'master': master,
+        'socket': socket.id,
+        'player': player,
+        'test': "ugh"
       }
-      socket.emit('ready-start', data);
-    });
+    }
+    socket.emit('ready-start', data);
 
     /** submits guess  **/
     $('#submit-guess').click(function () {
@@ -177,7 +167,7 @@ class Room extends React.Component {
       div = 2;
     }
 
-    var waves1 = new SineWaves({
+    new SineWaves({
       el: document.getElementById('waves1'),
 
       speed: 30,
@@ -247,7 +237,7 @@ class Room extends React.Component {
       }
     });
 
-    var waves2 = new SineWaves({
+    new SineWaves({
       el: document.getElementById('waves2'),
 
       speed: 30,
@@ -317,36 +307,35 @@ class Room extends React.Component {
       }
     });
 
-    var resizeWave = function (wave, width) {
-      var gradient = wave.ctx.createLinearGradient(0, 0, width, 0);
-      gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
-      gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)");
-      gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
+    // var resizeWave = function (wave, width) {
+    //   var gradient = wave.ctx.createLinearGradient(0, 0, width, 0);
+    //   gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
+    //   gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)");
+    //   gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
 
-      var index = -1;
-      var length = wave.waves.length;
-      while (++index < length) {
-        wave.waves[index].strokeStyle = gradient;
-      }
+    //   var index = -1;
+    //   var length = wave.waves.length;
+    //   while (++index < length) {
+    //     wave.waves[index].strokeStyle = gradient;
+    //   }
 
-      // Clean Up
-      index = void 0;
-      length = void 0;
-      gradient = void 0;
-    }
+    //   // Clean Up
+    //   index = void 0;
+    //   length = void 0;
+    //   gradient = void 0;
+    // }
 
   }
 
 
   render() {
     const { room, player } = this.props;
-    console.log(room)
 
     return (
       <div>
         {player === 1 ?
-        <div id="p1">P1</div> :
-        <div id="p2">P2</div>}
+          <div id="p1">P1</div> :
+          <div id="p2">P2</div>}
 
         <h2 id='room' >{room}</h2>
 

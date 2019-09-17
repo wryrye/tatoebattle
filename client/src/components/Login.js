@@ -1,9 +1,8 @@
 import React from "react";
 import './Login.css'
-import socketClient from "socket.io-client";
 import $ from "jquery"
 import { withRouter } from 'react-router-dom'
-import imageLoader from '../Images';
+import images from '../Images';
 
 
 class Login extends React.Component {
@@ -11,30 +10,23 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      socketServer: process.env.REACT_APP_SOCKET,
-      images: [],
       selected : null
     };
 
     this.handleClick = this.handleClick.bind(this);
-
   }
 
   componentDidMount() {
-    const { socketServer } = this.state;
-    const socket = socketClient(socketServer);
-
-    const images = imageLoader()
-    this.setState({images})
+    const { updateInfo } = this.props;
 
     $('#save').click(() => {
-      if($("#m").val() != ""){
+      if($("#m").val() !== ""){
         let cookie = {
           username:$("#m").val(),
           master:$(".selected").attr('title'),
         }
         document.cookie = JSON.stringify(cookie);
-        this.props.update(cookie)
+        updateInfo(cookie)
         $('#exampleModalLong').modal('hide');
 
       }else{
@@ -55,8 +47,6 @@ class Login extends React.Component {
   }
 
   render() {
-    const { images } = this.state;
-
     return (
       <div>
         <div className="modal fade" id="exampleModalLong" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

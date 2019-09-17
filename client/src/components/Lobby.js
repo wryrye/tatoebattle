@@ -1,29 +1,23 @@
 import React from "react";
 import './Lobby.css'
-import socketClient from "socket.io-client";
 import $ from "jquery"
 import { withRouter } from 'react-router-dom'
 import Login from './Login'
 
 class Lobby extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      socketServer: process.env.REACT_APP_SOCKET,
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   componentDidMount() {
-    const { socketServer } = this.state;
-    const socket = socketClient(socketServer);
+    const { socket, updateInfo, history } = this.props;
 
     let registered = document.cookie !== ''
     if(!registered) {
       console.log("not registered!");
       $('#exampleModalLong').modal('show');
     } else {
-      this.props.update(document.cookie)
+      updateInfo(document.cookie)
     }
     
     socket.emit('lobby-info');
@@ -45,8 +39,8 @@ class Lobby extends React.Component {
     });
 
     socket.on('accept-join', (data) => {
-      this.props.update(data);
-      this.props.history.push(`/room/${data.room}/${data.player}`)
+      updateInfo(data);
+      history.push(`/room/${data.room}/${data.player}`)
     });
   }
 
@@ -54,7 +48,7 @@ class Lobby extends React.Component {
 
     return (
       <div>
-        <Login update={this.props.update}/>
+        <Login {...this.props} />
         <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
           <a className="navbar-brand" href="lobby">翻译战争</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">

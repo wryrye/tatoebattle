@@ -5,8 +5,4 @@ const images = [
     { id: 4, title: 'xi', description: 'xi', src: '/assets/images/xi.png' }
 ];
 
-function imageLoader() {
-    return images;
-}
-
-export default imageLoader;
+export default images;

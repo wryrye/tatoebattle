@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import socketClient from "socket.io-client";
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js.map';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,39 +14,33 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isReady: false
-    }
+    this.socket = socketClient(process.env.REACT_APP_SOCKET);
 
-    this.socketServer = process.env.REACT_APP_SOCKET;
-    console.log(this.socketServer);
-
-    this.data = {
+    this.userInfo = {
       username: null,
       master: null,
       room: null,
       player: null
     }
 
-    this.update = this.update.bind(this);
+    this.updateInfo = this.updateInfo.bind(this);
 
     if (document.cookie) {
-      this.update(JSON.parse(document.cookie));
+      this.updateInfo(JSON.parse(document.cookie));
     }
   }
 
-  update(data) {
-    console.log("Updating data: " + JSON.stringify(data));
-    Object.assign(this.data, data)
+  updateInfo(data) {
+    console.log("Updating info: " + JSON.stringify(data));
+    Object.assign(this.userInfo, data)
   }
 
   render() {
-    console.log(this.data)
     return (
       <Router>
         <Switch>
-          <Route path="/lobby" exact render={(props) => <Lobby {...props} update={this.update} />} />
-          <Route path="/room/" render={(props) => <Room {...props} master={this.data.master} room={this.data.room} player={this.data.player} />} />
+          <Route path="/lobby" exact render={(props) => <Lobby {...props} socket={this.socket} updateInfo={this.updateInfo} />} />
+          <Route path="/room/" render={(props) => <Room {...props} socket={this.socket} {...this.userInfo} />} />
           <Redirect to="/lobby" />
         </Switch>
       </Router>
