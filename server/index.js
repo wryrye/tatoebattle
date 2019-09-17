@@ -37,7 +37,9 @@ function resetRoom(room) {
   roomList[room] = new Room(room)
 }
 
-let magenta = "\x1b[35m";
+const red = "\x1b[31m"
+const green = "\x1b[32m";
+const magenta = "\x1b[35m";
 
 io.on('connection', function (socket) {
 
@@ -45,7 +47,7 @@ io.on('connection', function (socket) {
   socket.on('request-join', () => {
     for (let [room, info] of Object.entries(roomMap)){
       if (info.occupancy < 2) {
-        console.log(magenta, `Client ${socket.id} has joined ${room}`)
+        console.log(green, `Client ${socket.id} has joined ${room}`)
         socket.emit('accept-join', {room: room, player: ++info.occupancy}); 
         return;
       }
@@ -58,12 +60,12 @@ io.on('connection', function (socket) {
   socket.on('ready-start', function (data) {
     const { room, player} = data;
 
-    console.log(magenta, `Client ${socket.id} in ${room} is ready`)
+    console.log(green, `Client ${socket.id} in ${room} is ready`)
 
     roomMap[room].players.push(player);
 
     if (roomMap[room].players.length >= 2) {
-      console.log(magenta, `Starting game in ${room}...`);
+      console.log(green, `Starting game in ${room}...`);
       startGame(room)
 
       // end game if no heartbeat
@@ -87,7 +89,7 @@ io.on('connection', function (socket) {
 
   socket.on('ready-next', function (room) {
     if (++roomList[room].ready == 2) {
-      console.log("LOG: " + "next round")
+      console.log(magenta, "Next round...")
       roomList[room].ready = 0
       nextRound(room)
     }
@@ -132,7 +134,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function (socket) {
-    console.log("Someone left!")
+    console.log(red, "Someone left!")
   });
 });
 
