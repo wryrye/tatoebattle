@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css.map';
 
 import Lobby from './components/Lobby';
 import Room from './components/Room';
+import './App.css' 
 
 
 class App extends React.Component {

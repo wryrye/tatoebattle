@@ -10,7 +10,7 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      selected : null
+      selected: null
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -20,21 +20,21 @@ class Login extends React.Component {
     const { updateInfo } = this.props;
 
     $('#save').click(() => {
-      if($("#m").val() !== ""){
+      if ($("#m").val() !== "") {
         let cookie = {
-          username:$("#m").val(),
-          master:$(".selected").attr('title'),
+          username: $("#m").val(),
+          master: $(".selected").attr('title'),
         }
         document.cookie = JSON.stringify(cookie);
         updateInfo(cookie)
         $('#exampleModalLong').modal('hide');
 
-      }else{
+      } else {
         $("#m").addClass('mandatory');
       }
 
     });
-    $('.master').click(function(){
+    $('.master').click(function () {
       $(".master").removeClass('selected');
       $(this).addClass('selected');
     });
@@ -43,37 +43,34 @@ class Login extends React.Component {
   handleClick(id) {
     this.setState({
       selected: id
-  });
+    });
   }
 
   render() {
     return (
-      <div>
-        <div className="modal fade" id="exampleModalLong" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">注册</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+      <div className="modal fade" id="exampleModalLong" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLongTitle">注册</h5>
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div>请选择一个用户名：<input id="m" autoComplete="off" /></div>
+              <div>请选择一个大师：</div>
+              <div>
+                {images.map(({ id, src, title, description }) => <img key={id} src={src} title={title} alt={description}
+                  className={'master' + (this.state.selected === id ? " selected" : "")}
+                  onClick={() => this.handleClick(id)} />)}
               </div>
-              <div className="modal-body">
-                <div>请选择一个用户名：<input id="m" autoComplete="off" /></div>
-                <div>请选择一个大师：</div>
-                <div>
-                  { images.map(({id, src, title, description}) => <img key={id} src={src} title={title} alt={description} 
-                    className={'master' + (this.state.selected === id ? " selected" : "")} 
-                    onClick={() => this.handleClick(id)} />) }
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button id="save" type="button" className="btn btn-primary">保存</button>
-              </div>
+            </div>
+            <div className="modal-footer">
+              <button id="save" type="button" className="btn btn-primary">保存</button>
             </div>
           </div>
         </div>
-
       </div>
     );
   }
