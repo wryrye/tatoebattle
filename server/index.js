@@ -37,6 +37,11 @@ roomList.forEach((name) => {
 
 function resetRoom(room) {
   roomMap[room] = new Room()
+
+  // io.in(room).clients((err, socketIds) => {
+  //   if (err) throw err;
+  //   socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(room));
+  // });
 }
 
 const red = "\x1b[31m"
@@ -110,7 +115,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function (socket) {
-    console.log(red, `Player has left`)
+    console.log(red, `Someone has disconnected`)
   });
 });
 
