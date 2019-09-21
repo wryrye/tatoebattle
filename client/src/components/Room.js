@@ -76,61 +76,61 @@ class Room extends React.Component {
     });
 
     /** listens for results **/
-    var first = null;
+    var isFirst = null;
 
-    socket.on('start-game', function (obj) {
-      $('#player' + opp).attr("src", `/assets/images/${obj.players[parseInt(opp) - 1].master}.png`);
+    socket.on('start-game', function (data) {
+      $('#player' + opp).attr("src", `/assets/images/${data.players[parseInt(opp) - 1].master}.png`);
     });
 
-    socket.on('next-round', function (obj) {
+    socket.on('next-round', function (data) {
       enSent.removeClass("loading");
-      console.log(JSON.stringify(obj))
-      enSent.html(obj.sent);
+      console.log(JSON.stringify(data))
+      enSent.html(data.sent);
       enSent.parent().textfill({ maxFontPixels: 100 });
       zhSent.empty();
       $('#submit-guess').prop("disabled", false);
     });
 
-    socket.on('prelim', function (obj) {
-      zhSent.html(obj.sent);
+    socket.on('prelim', function (data) {
+      isFirst = true;
+      zhSent.html(data.sent);
       zhSent.parent().textfill({ maxFontPixels: 100 });
-      animateWaves(obj.score);
-      first = { 'points': obj.score }
+      animateWaves(data.score);
     });
 
-    socket.on('final', function (obj) {
-      if (first) { // final results for both players
-        animateWaves(obj.score);
-      } else {
-        zhSent.html(obj.sent);
+    socket.on('final', function (data) {
+      if (!isFirst) {
+        zhSent.html(data.sent);
         zhSent.parent().textfill({ maxFontPixels: 100 });
-        animateWaves(obj.score);
       }
-      enSent.html("下一轮");
+
+      animateWaves(data.score);
+
+      enSent.html("Next round");
       enSent.addClass("loading");
       setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
-      first = null;
+      isFirst = null;
     });
 
-    socket.on('game-over', function (obj) {
-      if (first) {
-        animateWaves(obj.score);
-      } else {
-        zhSent.html(obj.sent);
-        animateWaves(obj.score);
+    socket.on('game-over', function (data) {
+      if (!isFirst) {
+        zhSent.html(data.sent);
+        zhSent.parent().textfill({ maxFontPixels: 100 });
       }
-      var outcome = player === obj.winner ? "赢" : "输";
+
+      animateWaves(data.score);
+
+      const outcome = player === data.winner ? "赢" : "输";
       enSent.html(outcome);
+      enSent.css("font-weight", "bold");
       setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
-      first = null;
     });
 
-    socket.on('disconnect', function (obj) {
-      enSent.html("对手断线了");
+    socket.on('disconnect', () => {
+      enSent.html("Opponent disconnected...");
       enSent.css("color", "red");
       enSent.css("font-weight", "bold");
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
-      first = null;
     });
 
     $("#text-input").keyup(function (event) {

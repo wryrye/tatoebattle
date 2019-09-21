@@ -126,7 +126,7 @@ function startGame(room) {
     roomMap[room].players.forEach((player) => {
       if (!io.sockets.connected[player.socket]) {
         io.to(room).emit('disconnect');
-        resetRoom(data.room);
+        resetRoom(room);
         clearInterval(heartbeat);
       }
     });
