@@ -1,14 +1,16 @@
 // redis server
-var redis = require("redis"),
-redis_client = redis.createClient(process.env.REDIS_URL);
+let redis = require("redis"),
+redisClient = redis.createClient(process.env.REDIS_URL),
+redisIndex = parseInt(Math.random() *20000);
 
-rand_start = parseInt(Math.random() *20000)
-redis_client.lrange(rand_start++,0,3, (err, data)=>{
-  if(err){
-    throw err;
-  }
-  console.log(data);
-});
+function getTrans() {
+  return new Promise(resolve => {
+    redisClient.lrange(redisIndex++, 0, 3, (err, data) => {
+      if (err) { throw err; }
+      resolve({ zhSent: data[1], enSent: data[2]});
+    });
+  });
+}
 
 // websocket server
 const io = require('socket.io')();
@@ -70,8 +72,6 @@ io.on('connection', function (socket) {
       // end game if no heartbeat
       let heartbeat = setInterval(function ping() {
         roomMap[room].players.forEach((player) => {
-          console.log('player: ' + JSON.stringify(player));
-          console.log('connected: ' + Object.keys(io.sockets.sockets));
           if (!io.sockets.connected[player.socket]) {
             io.emit(data.room, { 'op': 5 });
             resetRoom(data.room);
@@ -82,7 +82,7 @@ io.on('connection', function (socket) {
     }
   });
 
-  /** share players' information with eachother **/
+  // share players' information
   function startGame(room) {
     io.emit(room, { 'op': 4, 'players': roomMap[room].players });
     nextRound(room);
@@ -90,19 +90,19 @@ io.on('connection', function (socket) {
 
   socket.on('ready-next', function (room) {
     if (++roomMap[room].round.submissions == 2) {
-      console.log(magenta, "Next round...")
-      roomMap[room].round.submissions = 0
       nextRound(room)
     }
   });
 
   /** each round provides a new sentence **/
   function nextRound(room) {
-    redis_client.lrange(rand_start++, 0, 3, (err, data) => {
-      if (err) { throw err; }
-      roomMap[room].currSent = data[1];
-      io.emit(room, { 'op': 0, 'sent': data[2] });
-    });
+    console.log(magenta, "Next round...");
+    roomMap[room].round.submissions = 0;
+
+    getTrans().then(trans => {
+      roomMap[room].currSent = trans.zhSent;
+      io.emit(room, { 'op': 0, 'sent': trans.enSent });
+    })
   }
 
   /** listen for guess from client **/

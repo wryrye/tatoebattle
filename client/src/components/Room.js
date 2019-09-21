@@ -84,6 +84,7 @@ class Room extends React.Component {
           break;
         case 0: //next round
           enSent.removeClass("loading");
+          console.log(JSON.stringify(obj))
           enSent.html(obj.sent);
           enSent.parent().textfill({ maxFontPixels: 100 });
           zhSent.empty();
