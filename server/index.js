@@ -50,6 +50,7 @@ io.on('connection', function (socket) {
   socket.on('request-join', () => {
     for (let [room, info] of Object.entries(roomMap)) {
       if (info.occupancy < 2) {
+        socket.join(room);
         console.log(green, `Client ${socket.id} has joined ${room}`)
         socket.emit('accept-join', { room: room, player: ++info.occupancy });
         return;
@@ -114,14 +115,14 @@ io.on('connection', function (socket) {
 });
 
 function startGame(room) {
-  io.emit(room, { 'op': 4, 'players': roomMap[room].players });
+  io.to(room).emit(room, { 'op': 4, 'players': roomMap[room].players });
   nextRound(room);
 
   // end game if no heartbeat
   let heartbeat = setInterval(function ping() {
     roomMap[room].players.forEach((player) => {
       if (!io.sockets.connected[player.socket]) {
-        io.emit(data.room, { 'op': 5 });
+        io.to(room).emit(data.room, { 'op': 5 });
         resetRoom(data.room);
         clearInterval(heartbeat);
       }
@@ -135,7 +136,7 @@ function nextRound(room) {
 
   getTrans().then(trans => {
     roomMap[room].currSent = trans.zhSent;
-    io.emit(room, { 'op': 0, 'sent': trans.enSent });
+    io.to(room).emit(room, { 'op': 0, 'sent': trans.enSent });
   })
 }
 
