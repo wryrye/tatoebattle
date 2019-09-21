@@ -28,13 +28,13 @@ class Room {
 }
 
 const roomMap = {}
-const roomList = ['北京', '香港', '苏州', '苏州']
+const roomList = ['北京', '香港', '苏州', '桂林']
 roomList.forEach((name) => {
   roomMap[name] = new Room();
 });
 
 function resetRoom(room) {
-  roomList[room] = new Room(room)
+  roomMap[room] = new Room()
 }
 
 const red = "\x1b[31m"
@@ -52,13 +52,12 @@ io.on('connection', function (socket) {
         return;
       }
     }
-    
     socket.emit('full');
   });
 
   // start game when both players ready
   socket.on('ready-start', function (data) {
-    const { room, player} = data;
+    const { room, player } = data;
 
     console.log(green, `Client ${socket.id} in ${room} is ready`)
 
@@ -71,6 +70,8 @@ io.on('connection', function (socket) {
       // end game if no heartbeat
       let heartbeat = setInterval(function ping() {
         roomMap[room].players.forEach((player) => {
+          console.log('player: ' + JSON.stringify(player));
+          console.log('connected: ' + Object.keys(io.sockets.sockets));
           if (!io.sockets.connected[player.socket]) {
             io.emit(data.room, { 'op': 5 });
             resetRoom(data.room);
@@ -83,14 +84,14 @@ io.on('connection', function (socket) {
 
   /** share players' information with eachother **/
   function startGame(room) {
-    io.emit(room, { 'op': 4, 'players': roomList[room].players });
+    io.emit(room, { 'op': 4, 'players': roomMap[room].players });
     nextRound(room);
   }
 
   socket.on('ready-next', function (room) {
-    if (++roomList[room].ready == 2) {
+    if (++roomMap[room].round.submissions == 2) {
       console.log(magenta, "Next round...")
-      roomList[room].ready = 0
+      roomMap[room].round.submissions = 0
       nextRound(room)
     }
   });
@@ -99,35 +100,35 @@ io.on('connection', function (socket) {
   function nextRound(room) {
     redis_client.lrange(rand_start++, 0, 3, (err, data) => {
       if (err) { throw err; }
-      roomList[room].currSent = data[1];
+      roomMap[room].currSent = data[1];
       io.emit(room, { 'op': 0, 'sent': data[2] });
     });
   }
 
   /** listen for guess from client **/
   socket.on('submit-guess', function (obj) { //user submits guess
-    result = testGuess(roomList[obj.room].currSent, obj.guess)
-    if (roomList[obj.room].first == null) { // first user to answer gets preliminary results
+    result = testGuess(roomMap[obj.room].currSent, obj.guess)
+    if (roomMap[obj.room].first == null) { // first user to answer gets preliminary results
       is_p1 = obj.player == 1;
-      prev_score = roomList[obj.room].score
+      prev_score = roomMap[obj.room].score
       points = is_p1 ? result.points : -result.points;
-      roomList[obj.room].score += points;
-      roomList[obj.room].first = points
+      roomMap[obj.room].score += points;
+      roomMap[obj.room].first = points
       socket.emit(obj.room, { 'op': 1, 'sent': result.sent, 'points': points });
     } else {
       is_p1 = obj.player == 1;
-      prev_score = roomList[obj.room].score;
+      prev_score = roomMap[obj.room].score;
       points = is_p1 ? result.points : -result.points;
-      roomList[obj.room].score += points;
-      score = roomList[obj.room].score;
+      roomMap[obj.room].score += points;
+      score = roomMap[obj.room].score;
       // console.log(score)
       if (score >= 10 || score <= -10) { //if a winning score has been reached, game over!
         winner = score >= 10 ? 1 : 2;
-        io.emit(obj.room, { 'op': 3, 'sent': result.sent, 'points': points + roomList[obj.room].first, "winner": winner });
+        io.emit(obj.room, { 'op': 3, 'sent': result.sent, 'points': points + roomMap[obj.room].first, "winner": winner });
         resetRoom(obj.room);
       } else { //both players get final results
-        io.emit(obj.room, { 'op': 2, 'sent': result.sent, 'points': points + roomList[obj.room].first });
-        roomList[obj.room].first = null
+        io.emit(obj.room, { 'op': 2, 'sent': result.sent, 'points': points + roomMap[obj.room].first });
+        roomMap[obj.room].first = null
       }
 
     }

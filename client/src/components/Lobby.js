@@ -20,6 +20,9 @@ class Lobby extends React.Component {
       updateInfo(document.cookie)
     }
 
+    socket.removeAllListeners();
+    console.log("hello");
+
     $('.battle').click(function () {
       socket.emit('request-join', $(this).attr('id'));
     });

@@ -16,6 +16,7 @@ class Room extends React.Component {
 
   componentDidMount() {
     const { socket, room, player, master } = this.props;
+    console.log('socketID:' + socket.id);
 
     if (!room || !player || !master) {
       let queryString = this.props.location.search;

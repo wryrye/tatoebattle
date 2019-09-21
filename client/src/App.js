@@ -15,7 +15,18 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isReady: false
+    }
+
     this.socket = socketClient(process.env.REACT_APP_SOCKET);
+
+    this.socket.on('connect', () => {
+      console.log(this.socket.id);
+      this.setState({
+        isReady: true
+      })
+    });
 
     this.userInfo = {
       username: null,
@@ -37,6 +48,10 @@ class App extends React.Component {
   }
 
   render() {
+    const { isReady } = this.state;
+
+    if (!isReady) return null;
+
     return (
       <Router>
         <Switch>
