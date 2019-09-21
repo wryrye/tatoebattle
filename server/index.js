@@ -85,23 +85,28 @@ io.on('connection', function (socket) {
     const isFirst = roomInfo.first == null;
 
     let { htmlAnswer, points } = testGuess(roomInfo.answer, guess)
-    points = isP1 ? -points : points
+    points = isP1 ? points : -points;
 
     roomInfo.score += points;
+    const score = roomInfo.score;
+
+
 
     // first submitter gets prelim results
     if (isFirst) { 
       roomInfo.first = points
-      socket.emit('prelim', {'sent': htmlAnswer, 'points': points });
+      socket.emit('prelim', {'sent': htmlAnswer, score });
     } else {
       //if a winning score has been reached, game over!
-      if (roomInfo.score >= 10 || roomInfo.score <= -10) { 
-        const winner = roomInfo.score >= 10 ? 1 : 2;
+      console.log('Score: ' + score)
+
+      if (score >= 10 || score <= -10) { 
+        const winner = score >= 10 ? 1 : 2;
         console.log(cyan, `Player ${winner} has won!`)
-        io.to(room).emit('game-over', { 'sent': htmlAnswer, 'points': points + roomInfo.first, "winner": winner });
+        io.to(room).emit('game-over', { 'sent': htmlAnswer, score, winner });
         resetRoom(room);
       } else { // both players get final results
-        io.to(room).emit('final', { 'sent': htmlAnswer, 'points': points + roomInfo.first });
+        io.to(room).emit('final', { 'sent': htmlAnswer, score });
         roomInfo.first = null
       }
     }

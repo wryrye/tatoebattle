@@ -71,13 +71,13 @@ class Room extends React.Component {
     /** submits guess  **/
     $('#submit-guess').click(function () {
       $(this).prop("disabled", true);
-      socket.emit('submit-guess', { "room": room, "player": "<%= player %>", "guess": $("#text-input").val() });
+      socket.emit('submit-guess', { room, player, guess: $("#text-input").val() });
       $("#text-input").val('');
     });
 
     /** listens for results **/
     var first = null;
-    
+
     socket.on('start-game', function (obj) {
       $('#player' + opp).attr("src", `/assets/images/${obj.players[parseInt(opp) - 1].master}.png`);
     });
@@ -94,17 +94,17 @@ class Room extends React.Component {
     socket.on('prelim', function (obj) {
       zhSent.html(obj.sent);
       zhSent.parent().textfill({ maxFontPixels: 100 });
-      animateWaves(obj.points);
-      first = { 'points': obj.points }
+      animateWaves(obj.score);
+      first = { 'points': obj.score }
     });
 
     socket.on('final', function (obj) {
       if (first) { // final results for both players
-        animateWaves(-first.points + obj.points);
+        animateWaves(obj.score);
       } else {
         zhSent.html(obj.sent);
         zhSent.parent().textfill({ maxFontPixels: 100 });
-        animateWaves(obj.points);
+        animateWaves(obj.score);
       }
       enSent.html("下一轮");
       enSent.addClass("loading");
@@ -114,10 +114,10 @@ class Room extends React.Component {
 
     socket.on('game-over', function (obj) {
       if (first) {
-        animateWaves(-first.points + obj.points);
+        animateWaves(obj.score);
       } else {
         zhSent.html(obj.sent);
-        animateWaves(obj.points);
+        animateWaves(obj.score);
       }
       var outcome = player === obj.winner ? "赢" : "输";
       enSent.html(outcome);
@@ -143,22 +143,23 @@ class Room extends React.Component {
 
     /** eye candy **/
     var step = parseFloat($('#waves1').css("width")) / 10;
-    var waves1_width = parseFloat($('#waves1').css("width"));
-    var waves2_width = parseFloat($('#waves2').css("width"));
-    var waves2_right = parseFloat($('#waves2').css("right"));
+    var baseWidth = parseFloat($('#waves1').css("width"));
+    var baseRight = parseFloat($('#waves2').css("right"));;
 
-    function animateWaves(points) {
-      waves1_width += step * points;
-      waves2_width -= step * points;
-      waves2_right -= step * points;
+    function animateWaves(score) {
+      let clampScore = Math.min(Math.max(score, -10), 10);
+
+      let wavesWidth1 = baseWidth + step * clampScore;
+      let wavesWidth2 = baseWidth - step * clampScore;
+      let wavesRight2 = baseRight - step * clampScore;
       console.log("animating")
       $("#waves1").animate({
-        width: waves1_width,
+        width: wavesWidth1,
       }, 3000, function () {
       });
       $("#waves2").animate({
-        width: waves2_width,
-        right: waves2_right,
+        width: wavesWidth2,
+        right: wavesRight2,
       }, 3000, function () {
       });
     }
