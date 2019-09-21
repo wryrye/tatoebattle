@@ -1,13 +1,13 @@
 // redis server
 let redis = require("redis"),
-redisClient = redis.createClient(process.env.REDIS_URL),
-redisIndex = parseInt(Math.random() *20000);
+  redisClient = redis.createClient(process.env.REDIS_URL),
+  redisIndex = parseInt(Math.random() * 20000);
 
 function getTrans() {
   return new Promise(resolve => {
     redisClient.lrange(redisIndex++, 0, 3, (err, data) => {
       if (err) { throw err; }
-      resolve({ zhSent: data[1], enSent: data[2]});
+      resolve({ zhSent: data[1], enSent: data[2] });
     });
   });
 }
@@ -42,15 +42,16 @@ function resetRoom(room) {
 const red = "\x1b[31m"
 const green = "\x1b[32m";
 const magenta = "\x1b[35m";
+const cyan = "\x1b[36m";
 
 io.on('connection', function (socket) {
 
   // find open room
   socket.on('request-join', () => {
-    for (let [room, info] of Object.entries(roomMap)){
+    for (let [room, info] of Object.entries(roomMap)) {
       if (info.occupancy < 2) {
         console.log(green, `Client ${socket.id} has joined ${room}`)
-        socket.emit('accept-join', {room: room, player: ++info.occupancy}); 
+        socket.emit('accept-join', { room: room, player: ++info.occupancy });
         return;
       }
     }
@@ -68,44 +69,17 @@ io.on('connection', function (socket) {
     if (roomMap[room].players.length >= 2) {
       console.log(green, `Starting game in ${room}...`);
       startGame(room)
-
-      // end game if no heartbeat
-      let heartbeat = setInterval(function ping() {
-        roomMap[room].players.forEach((player) => {
-          if (!io.sockets.connected[player.socket]) {
-            io.emit(data.room, { 'op': 5 });
-            resetRoom(data.room);
-            clearInterval(heartbeat);
-          }
-        });
-      }, 15000);
     }
   });
 
-  // share players' information
-  function startGame(room) {
-    io.emit(room, { 'op': 4, 'players': roomMap[room].players });
-    nextRound(room);
-  }
-
+  // next round when both players ready
   socket.on('ready-next', function (room) {
     if (++roomMap[room].round.submissions == 2) {
       nextRound(room)
     }
   });
 
-  /** each round provides a new sentence **/
-  function nextRound(room) {
-    console.log(magenta, "Next round...");
-    roomMap[room].round.submissions = 0;
-
-    getTrans().then(trans => {
-      roomMap[room].currSent = trans.zhSent;
-      io.emit(room, { 'op': 0, 'sent': trans.enSent });
-    })
-  }
-
-  /** listen for guess from client **/
+  // evaluate submission
   socket.on('submit-guess', function (obj) { //user submits guess
     result = testGuess(roomMap[obj.room].currSent, obj.guess)
     if (roomMap[obj.room].first == null) { // first user to answer gets preliminary results
@@ -124,22 +98,47 @@ io.on('connection', function (socket) {
       // console.log(score)
       if (score >= 10 || score <= -10) { //if a winning score has been reached, game over!
         winner = score >= 10 ? 1 : 2;
+        console.log(cyan, `Player ${winner} has won!`)
         io.emit(obj.room, { 'op': 3, 'sent': result.sent, 'points': points + roomMap[obj.room].first, "winner": winner });
         resetRoom(obj.room);
       } else { //both players get final results
         io.emit(obj.room, { 'op': 2, 'sent': result.sent, 'points': points + roomMap[obj.room].first });
         roomMap[obj.room].first = null
       }
-
     }
   });
 
   socket.on('disconnect', function (socket) {
-    console.log(red, "Someone left!")
+    console.log(red, `Player has left`)
   });
 });
 
-/** returns color-coded html string to display correctness of guess **/
+function startGame(room) {
+  io.emit(room, { 'op': 4, 'players': roomMap[room].players });
+  nextRound(room);
+
+  // end game if no heartbeat
+  let heartbeat = setInterval(function ping() {
+    roomMap[room].players.forEach((player) => {
+      if (!io.sockets.connected[player.socket]) {
+        io.emit(data.room, { 'op': 5 });
+        resetRoom(data.room);
+        clearInterval(heartbeat);
+      }
+    });
+  }, 15000);
+}
+
+function nextRound(room) {
+  console.log(magenta, "Next round...");
+  roomMap[room].round.submissions = 0;
+
+  getTrans().then(trans => {
+    roomMap[room].currSent = trans.zhSent;
+    io.emit(room, { 'op': 0, 'sent': trans.enSent });
+  })
+}
+
 function testGuess(actual, guess) {
   var points = 0;
   var punct = "“”！。？，\\\"";
@@ -159,7 +158,6 @@ function testGuess(actual, guess) {
   }
   return { "sent": resultString, "points": points }
 }
-
 
 const port = 3045;
 io.listen(port);
