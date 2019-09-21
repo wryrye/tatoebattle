@@ -36,7 +36,7 @@ class Lobby extends React.Component {
   render() {
 
     return (
-      <div class="HolyGrail">
+      <div className="HolyGrail">
         <Login {...this.props} />
         <header className="navbar navbar-expand-md navbar-dark bg-dark">
           <a className="navbar-brand" href="lobby">TatoeBattle</a>
@@ -55,12 +55,12 @@ class Lobby extends React.Component {
             </ul>
           </div>
         </header>
-        <div class="HolyGrail-body">
+        <div className="HolyGrail-body">
           <div className="container">
             <div className="row h-100">
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/rando2.png"/>
+                  <img className="card-img logo" src="/assets/images/rando2.png" alt=""/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
@@ -74,7 +74,7 @@ class Lobby extends React.Component {
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/google2.png"/>
+                  <img className="card-img logo" src="/assets/images/google2.png" alt=""/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
@@ -88,7 +88,7 @@ class Lobby extends React.Component {
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/baidu2.png"/>
+                  <img className="card-img logo" src="/assets/images/baidu2.png" alt=""/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
