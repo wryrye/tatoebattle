@@ -28,7 +28,7 @@ class Room {
     this.score = 0;
 
     this.round = {
-      sentence: null,
+      answer: null,
       submissions: 0,
       first: null
     }
@@ -80,30 +80,29 @@ io.on('connection', function (socket) {
   // evaluate submission
   socket.on('submit-guess', function (data) {
     const { room, player, guess } = data;
-    let { points, sent } = testGuess(roomMap[room].currSent, guess)
-
-    const isFirst = roomMap[room].first == null;
     const isP1 = player == 1;
+    const roomInfo = roomMap[room];
+    const isFirst = roomInfo.first == null;
+
+    let { htmlAnswer, points } = testGuess(roomInfo.answer, guess)
     points = isP1 ? -points : points
 
-    roomMap[room].score += points;
+    roomInfo.score += points;
 
     // first submitter gets prelim results
     if (isFirst) { 
-      roomMap[room].first = points
-      socket.emit(room, { 'op': 1, 'sent': sent, 'points': points });
+      roomInfo.first = points
+      socket.emit(room, { 'op': 1, 'sent': htmlAnswer, 'points': points });
     } else {
-      score = roomMap[room].score;
-
       //if a winning score has been reached, game over!
-      if (score >= 10 || score <= -10) { 
-        winner = score >= 10 ? 1 : 2;
+      if (roomInfo.score >= 10 || roomInfo.score <= -10) { 
+        const winner = roomInfo.score >= 10 ? 1 : 2;
         console.log(cyan, `Player ${winner} has won!`)
-        io.emit(room, { 'op': 3, 'sent': sent, 'points': points + roomMap[room].first, "winner": winner });
+        io.emit(room, { 'op': 3, 'sent': htmlAnswer, 'points': points + roomInfo.first, "winner": winner });
         resetRoom(room);
-      } else { //both players get final results
-        io.emit(room, { 'op': 2, 'sent': sent, 'points': points + roomMap[room].first });
-        roomMap[room].first = null
+      } else { // both players get final results
+        io.emit(room, { 'op': 2, 'sent': htmlAnswer, 'points': points + roomInfo.first });
+        roomInfo.first = null
       }
     }
   });
@@ -134,29 +133,33 @@ function nextRound(room) {
   roomMap[room].round.submissions = 0;
 
   getTrans().then(trans => {
-    roomMap[room].currSent = trans.zhSent;
+    roomMap[room].answer = trans.zhSent;
     io.to(room).emit(room, { 'op': 0, 'sent': trans.enSent });
   })
 }
 
-function testGuess(actual, guess) {
-  var points = 0;
-  var punct = "“”！。？，\\\"";
-  var resultString = '';
-  for (var i of actual) {
-    if (punct.indexOf(i) > -1) {//if a char is punctuation
-      resultString += '<span style = "color:#000000;">' + i + '</span>'; //black
-      continue;
+function testGuess(answer, guess) {
+  const punct = "“”！。？，\\\"";
+
+  let htmlAnswer = '';
+  let points = 0;
+
+  for (let i of answer) {
+    if (guess.indexOf(i) == -1 || punct.indexOf(i) > -1) {//if a char is punctuation
+      htmlAnswer += colorChar('000000', i) //black
     }
     if (guess.indexOf(i) > -1) {//if char is right
-      points++;
+      htmlAnswer += colorChar('7cfc00', i); //green
       guess = guess.replace(i, '');
-      resultString += '<span style = "color:#7cfc00;">' + i + '</span>'; //green
-    } else {//if char is wrong
-      resultString += '<span style = "color:#000000;">' + i + '</span>'; //black
-    }
+      points++;
+    } 
   }
-  return { "sent": resultString, "points": points }
+  
+  return { htmlAnswer, points }
+}
+
+function colorChar(color, char){
+  return `<span style = "color:#${color};">${char}</span>`;
 }
 
 function resetRoom(room) {
