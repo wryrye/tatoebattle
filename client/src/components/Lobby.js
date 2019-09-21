@@ -36,7 +36,7 @@ class Lobby extends React.Component {
       <div class="HolyGrail">
         <Login {...this.props} />
         <header className="navbar navbar-expand-md navbar-dark bg-dark">
-          <a className="navbar-brand" href="lobby">Translation Warfare</a>
+          <a className="navbar-brand" href="lobby">TatoeBattle</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -57,7 +57,7 @@ class Lobby extends React.Component {
             <div className="row h-100">
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/rando2.png" alt="Card image" />
+                  <img class="card-img logo" src="/assets/images/rando2.png"/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
@@ -71,7 +71,7 @@ class Lobby extends React.Component {
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/google2.png" alt="Card image" />
+                  <img class="card-img logo" src="/assets/images/google2.png"/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
@@ -85,7 +85,7 @@ class Lobby extends React.Component {
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img class="card-img logo" src="/assets/images/baidu2.png" alt="Card image" />
+                  <img class="card-img logo" src="/assets/images/baidu2.png"/>
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
