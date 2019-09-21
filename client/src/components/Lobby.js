@@ -60,42 +60,42 @@ class Lobby extends React.Component {
             <div className="row h-100">
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img className="card-img logo" src="/assets/images/rando2.png" alt=""/>
+                  <img className="card-img logo" src="/assets/images/rando2.png" alt="" />
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
                         <h3 className="card-title">Random</h3>
                         <p className="card-text">Play against some rando</p>
                       </div>
-                      <button id="北京" className="battle btn btn-primary hidden big-text">PLAY</button>
+                      <button id="rando" className="battle btn btn-primary hidden big-text">PLAY</button>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img className="card-img logo" src="/assets/images/google2.png" alt=""/>
+                  <img className="card-img logo" src="/assets/images/google2.png" alt="" />
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
                         <h3 className="card-title">Google</h3>
                         <p className="card-text">Play against Google</p>
                       </div>
-                      <button id="香港" className="battle btn btn-primary hidden big-text">PLAY</button>
+                      <button id="google" className="battle btn btn-primary hidden big-text">PLAY</button>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-sm-4 mt-4">
                 <div className="wrapper h-100">
-                  <img className="card-img logo" src="/assets/images/baidu2.png" alt=""/>
+                  <img className="card-img logo" src="/assets/images/baidu2.png" alt="" />
                   <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                     <div className="card-block h-100 flexing">
                       <div className="flexible">
                         <h3 className="card-title">Baidu</h3>
                         <p className="card-text">Play against Baidu</p>
                       </div>
-                      <button id="苏州" className="battle btn btn-primary hidden big-text">PLAY</button>
+                      <button id="baidu" className="battle btn btn-primary hidden big-text">PLAY</button>
                     </div>
                   </div>
                 </div>
