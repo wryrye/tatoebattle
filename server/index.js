@@ -92,16 +92,16 @@ io.on('connection', function (socket) {
     // first submitter gets prelim results
     if (isFirst) { 
       roomInfo.first = points
-      socket.emit(room, { 'op': 1, 'sent': htmlAnswer, 'points': points });
+      socket.emit('prelim', {'sent': htmlAnswer, 'points': points });
     } else {
       //if a winning score has been reached, game over!
       if (roomInfo.score >= 10 || roomInfo.score <= -10) { 
         const winner = roomInfo.score >= 10 ? 1 : 2;
         console.log(cyan, `Player ${winner} has won!`)
-        io.emit(room, { 'op': 3, 'sent': htmlAnswer, 'points': points + roomInfo.first, "winner": winner });
+        io.to(room).emit('game-over', { 'sent': htmlAnswer, 'points': points + roomInfo.first, "winner": winner });
         resetRoom(room);
       } else { // both players get final results
-        io.emit(room, { 'op': 2, 'sent': htmlAnswer, 'points': points + roomInfo.first });
+        io.to(room).emit('final', { 'sent': htmlAnswer, 'points': points + roomInfo.first });
         roomInfo.first = null
       }
     }
@@ -113,14 +113,14 @@ io.on('connection', function (socket) {
 });
 
 function startGame(room) {
-  io.to(room).emit(room, { 'op': 4, 'players': roomMap[room].players });
+  io.to(room).emit('start-game', {'players': roomMap[room].players });
   nextRound(room);
 
   // end game if no heartbeat
   let heartbeat = setInterval(function ping() {
     roomMap[room].players.forEach((player) => {
       if (!io.sockets.connected[player.socket]) {
-        io.to(room).emit(data.room, { 'op': 5 });
+        io.to(room).emit('disconnect');
         resetRoom(data.room);
         clearInterval(heartbeat);
       }
@@ -134,7 +134,7 @@ function nextRound(room) {
 
   getTrans().then(trans => {
     roomMap[room].answer = trans.zhSent;
-    io.to(room).emit(room, { 'op': 0, 'sent': trans.enSent });
+    io.to(room).emit('next-round', {'sent': trans.enSent });
   })
 }
 
@@ -154,7 +154,7 @@ function testGuess(answer, guess) {
       points++;
     } 
   }
-  
+
   return { htmlAnswer, points }
 }
 

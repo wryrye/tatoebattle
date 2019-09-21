@@ -77,60 +77,60 @@ class Room extends React.Component {
 
     /** listens for results **/
     var first = null;
-    socket.on(room, function (obj) {
-      switch (obj.op) {
-        case 4: //get other players info
-          $('#player' + opp).attr("src", `/assets/images/${obj.players[parseInt(opp) - 1].master}.png`);
-          break;
-        case 0: //next round
-          enSent.removeClass("loading");
-          console.log(JSON.stringify(obj))
-          enSent.html(obj.sent);
-          enSent.parent().textfill({ maxFontPixels: 100 });
-          zhSent.empty();
-          $('#submit-guess').prop("disabled", false);
-          break;
-        case 1: // preliminary results for the genius who answers first
-          zhSent.html(obj.sent);
-          zhSent.parent().textfill({ maxFontPixels: 100 });
-          animateWaves(obj.points);
-          first = { 'points': obj.points }
-          break;
-        case 2:
-          if (first) { // final results for both players
-            animateWaves(-first.points + obj.points);
-          } else {
-            zhSent.html(obj.sent);
-            zhSent.parent().textfill({ maxFontPixels: 100 });
-            animateWaves(obj.points);
-          }
-          enSent.html("下一轮");
-          enSent.addClass("loading");
-          setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
-          first = null;
-          break;
-        case 3: //game is over
-          if (first) {
-            animateWaves(-first.points + obj.points);
-          } else {
-            zhSent.html(obj.sent);
-            animateWaves(obj.points);
-          }
-          var outcome = player === obj.winner ? "赢" : "输";
-          enSent.html(outcome);
-          setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
-          first = null;
-          break;
-        case 5: //game is over
-          enSent.html("对手断线了");
-          enSent.css("color", "red");
-          enSent.css("font-weight", "bold");
-          setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
-          first = null;
-          break;
-        default: //erm...
-          console.log("default")
+    
+    socket.on('start-game', function (obj) {
+      $('#player' + opp).attr("src", `/assets/images/${obj.players[parseInt(opp) - 1].master}.png`);
+    });
+
+    socket.on('next-round', function (obj) {
+      enSent.removeClass("loading");
+      console.log(JSON.stringify(obj))
+      enSent.html(obj.sent);
+      enSent.parent().textfill({ maxFontPixels: 100 });
+      zhSent.empty();
+      $('#submit-guess').prop("disabled", false);
+    });
+
+    socket.on('prelim', function (obj) {
+      zhSent.html(obj.sent);
+      zhSent.parent().textfill({ maxFontPixels: 100 });
+      animateWaves(obj.points);
+      first = { 'points': obj.points }
+    });
+
+    socket.on('final', function (obj) {
+      if (first) { // final results for both players
+        animateWaves(-first.points + obj.points);
+      } else {
+        zhSent.html(obj.sent);
+        zhSent.parent().textfill({ maxFontPixels: 100 });
+        animateWaves(obj.points);
       }
+      enSent.html("下一轮");
+      enSent.addClass("loading");
+      setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
+      first = null;
+    });
+
+    socket.on('game-over', function (obj) {
+      if (first) {
+        animateWaves(-first.points + obj.points);
+      } else {
+        zhSent.html(obj.sent);
+        animateWaves(obj.points);
+      }
+      var outcome = player === obj.winner ? "赢" : "输";
+      enSent.html(outcome);
+      setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
+      first = null;
+    });
+
+    socket.on('disconnect', function (obj) {
+      enSent.html("对手断线了");
+      enSent.css("color", "red");
+      enSent.css("font-weight", "bold");
+      setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
+      first = null;
     });
 
     $("#text-input").keyup(function (event) {
