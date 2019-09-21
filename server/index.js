@@ -1,3 +1,8 @@
+const red = "\x1b[31m"
+const green = "\x1b[32m";
+const magenta = "\x1b[35m";
+const cyan = "\x1b[36m";
+
 // redis server
 let redis = require("redis"),
   redisClient = redis.createClient(process.env.REDIS_URL),
@@ -13,6 +18,7 @@ function getTrans() {
 }
 
 // websocket server
+
 const io = require('socket.io')();
 
 class Room {
@@ -35,20 +41,6 @@ roomList.forEach((name) => {
   roomMap[name] = new Room();
 });
 
-function resetRoom(room) {
-  roomMap[room] = new Room()
-
-  // io.in(room).clients((err, socketIds) => {
-  //   if (err) throw err;
-  //   socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(room));
-  // });
-}
-
-const red = "\x1b[31m"
-const green = "\x1b[32m";
-const magenta = "\x1b[35m";
-const cyan = "\x1b[36m";
-
 io.on('connection', function (socket) {
 
   // find open room
@@ -61,6 +53,7 @@ io.on('connection', function (socket) {
         return;
       }
     }
+    // @unhandled
     socket.emit('full');
   });
 
@@ -69,7 +62,6 @@ io.on('connection', function (socket) {
     const { room, player } = data;
 
     console.log(green, `Client ${socket.id} in ${room} is ready`)
-
     roomMap[room].players.push(player);
 
     if (roomMap[room].players.length >= 2) {
@@ -86,30 +78,32 @@ io.on('connection', function (socket) {
   });
 
   // evaluate submission
-  socket.on('submit-guess', function (obj) { //user submits guess
-    result = testGuess(roomMap[obj.room].currSent, obj.guess)
-    if (roomMap[obj.room].first == null) { // first user to answer gets preliminary results
-      is_p1 = obj.player == 1;
-      prev_score = roomMap[obj.room].score
-      points = is_p1 ? result.points : -result.points;
-      roomMap[obj.room].score += points;
-      roomMap[obj.room].first = points
-      socket.emit(obj.room, { 'op': 1, 'sent': result.sent, 'points': points });
+  socket.on('submit-guess', function (data) {
+    const { room, player, guess } = data;
+    let { points, sent } = testGuess(roomMap[room].currSent, guess)
+
+    const isFirst = roomMap[room].first == null;
+    const isP1 = player == 1;
+    points = isP1 ? -points : points
+
+    roomMap[room].score += points;
+
+    // first submitter gets prelim results
+    if (isFirst) { 
+      roomMap[room].first = points
+      socket.emit(room, { 'op': 1, 'sent': sent, 'points': points });
     } else {
-      is_p1 = obj.player == 1;
-      prev_score = roomMap[obj.room].score;
-      points = is_p1 ? result.points : -result.points;
-      roomMap[obj.room].score += points;
-      score = roomMap[obj.room].score;
-      // console.log(score)
-      if (score >= 10 || score <= -10) { //if a winning score has been reached, game over!
+      score = roomMap[room].score;
+
+      //if a winning score has been reached, game over!
+      if (score >= 10 || score <= -10) { 
         winner = score >= 10 ? 1 : 2;
         console.log(cyan, `Player ${winner} has won!`)
-        io.emit(obj.room, { 'op': 3, 'sent': result.sent, 'points': points + roomMap[obj.room].first, "winner": winner });
-        resetRoom(obj.room);
+        io.emit(room, { 'op': 3, 'sent': sent, 'points': points + roomMap[room].first, "winner": winner });
+        resetRoom(room);
       } else { //both players get final results
-        io.emit(obj.room, { 'op': 2, 'sent': result.sent, 'points': points + roomMap[obj.room].first });
-        roomMap[obj.room].first = null
+        io.emit(room, { 'op': 2, 'sent': sent, 'points': points + roomMap[room].first });
+        roomMap[room].first = null
       }
     }
   });
@@ -163,6 +157,15 @@ function testGuess(actual, guess) {
     }
   }
   return { "sent": resultString, "points": points }
+}
+
+function resetRoom(room) {
+  roomMap[room] = new Room()
+
+  // io.in(room).clients((err, socketIds) => {
+  //   if (err) throw err;
+  //   socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(room));
+  // });
 }
 
 const port = 3045;
