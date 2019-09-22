@@ -11,9 +11,10 @@ module.exports = function (io, socket) {
         for (let [room, info] of Object.entries(Game.roomMap)) {
             if (info.occupancy === 0) {
                 socket.join(room);
-                console.log(green, `Client Google has joined ${room}`)
                 console.log(green, `Client ${socket.id} has joined ${room}`)
-                socket.emit('accept-join', { room: room, player: info.occupancy = 2 });
+                console.log(green, `Client Google has joined ${room}`)
+                socket.emit('accept-join', { room: room, player: 1 });
+                info.occupancy = 2;
                 return;
             }
         }
@@ -27,18 +28,17 @@ module.exports = function (io, socket) {
         const { room, player } = data;
         const roomInfo = Game.roomMap[room];
 
-        console.log(green, `Client Google in ${room} is ready`)
         console.log(green, `Client ${socket.id} in ${room} is ready`)
+        console.log(green, `Client Google in ${room} is ready`)
+        roomInfo.players.push(player);
         roomInfo.players.push({
             'uname': "Google",
             'master': "google2",
             'socket': null,
-            'player': 1,
-            'test': "ugh"
+            'player': 2,
         });
-        roomInfo.players.push(player);
 
-        if (roomInfo.players.length >= 1) {
+        if (roomInfo.players.length >= 2) {
             console.log(green, `Starting game in ${room}...`);
             Game.startGame(io, room)
         }
@@ -63,11 +63,10 @@ module.exports = function (io, socket) {
         const [googleGuess] = await translate.translate(roomInfo.question, 'zh');
         let { points: googlePoints } = Game.testGuess(roomInfo.answer, googleGuess);
 
-        roomInfo.score += googlePoints - points;
+        roomInfo.score += points - googlePoints;
         const score = roomInfo.score;
 
         // player gets prelim results
-        roomInfo.round.first = player
         socket.emit('prelim', { 'sent': htmlAnswer, score });
 
         sleep(4000).then(() => {
