@@ -33,7 +33,7 @@ module.exports = function (io, socket) {
         roomInfo.players.push(player);
         roomInfo.players.push({
             'uname': "Google",
-            'master': "google2",
+            'master': "google",
             'socket': null,
             'player': 2,
         });
