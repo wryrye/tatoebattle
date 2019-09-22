@@ -3,12 +3,12 @@ const green = "\x1b[32m";
 const magenta = "\x1b[35m";
 const cyan = "\x1b[36m";
 
-const Util = require('./Util.js');
+const Game = require('./Game.js');
 
-module.exports = function (io, socket, roomMap) {
+module.exports = function (io, socket) {
 
     (() => {
-        for (let [room, info] of Object.entries(roomMap)) {
+        for (let [room, info] of Object.entries(Game.roomMap)) {
             if (info.occupancy < 2) {
                 socket.join(room);
                 console.log(green, `Client ${socket.id} has joined ${room}`)
@@ -24,54 +24,55 @@ module.exports = function (io, socket, roomMap) {
     // start game when both players ready
     socket.on('ready-start', function (data) {
         const { room, player } = data;
+        const roomInfo = Game.roomMap[room];
 
         console.log(green, `Client ${socket.id} in ${room} is ready`)
-        roomMap[room].players.push(player);
+        roomInfo.players.push(player);
 
-        if (roomMap[room].players.length >= 2) {
+        if (roomInfo.players.length >= 2) {
             console.log(green, `Starting game in ${room}...`);
-            startGame(room)
+            Game.startGame(io, room)
         }
     });
 
     // next round when both players ready
     socket.on('ready-next', function (room) {
-        if (++roomMap[room].round.submissions == 2) {
-            nextRound(room)
+        const roomInfo = Game.roomMap[room];
+
+        if (++roomInfo.round.submissions == 2) {
+            Game.nextRound(io, room)
         }
     });
 
     // evaluate submission
     socket.on('submit-guess', function (data) {
         const { room, player, guess } = data;
-        const isP1 = player == 1;
-        const roomInfo = roomMap[room];
-        const isFirst = roomInfo.first == null;
+        const roomInfo = Game.roomMap[room];
+        const isFirst = roomInfo.round.first === null;
+        const isP1 = player === 1;
 
-        let { htmlAnswer, points } = testGuess(roomInfo.answer, guess)
+        let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
         points = isP1 ? points : -points;
 
         roomInfo.score += points;
         const score = roomInfo.score;
 
-
-
-        // first submitter gets prelim results
+        // first gets prelim results
         if (isFirst) {
-            roomInfo.first = points
+            roomInfo.round.first = player
             socket.emit('prelim', { 'sent': htmlAnswer, score });
         } else {
-            //if a winning score has been reached, game over!
             console.log('Score: ' + score)
 
-            if (score >= 10 || score <= -10) {
+            // both get final results
+            if (-10 < score && score < 10) {
+                io.to(room).emit('final', { 'sent': htmlAnswer, score });
+                roomInfo.round.first = null
+            } else { // winning score has been reached, game over!
                 const winner = score >= 10 ? 1 : 2;
                 console.log(cyan, `Player ${winner} has won!`)
                 io.to(room).emit('game-over', { 'sent': htmlAnswer, score, winner });
-                resetRoom(room);
-            } else { // both players get final results
-                io.to(room).emit('final', { 'sent': htmlAnswer, score });
-                roomInfo.first = null
+                Game.resetRoom(room);
             }
         }
     });
@@ -79,68 +80,5 @@ module.exports = function (io, socket, roomMap) {
     socket.on('disconnect', function (socket) {
         console.log(red, `Someone has disconnected`)
     });
-
-    function startGame(room) {
-        io.to(room).emit('start-game', { 'players': roomMap[room].players });
-        nextRound(room);
-
-        // end game if no heartbeat
-        let heartbeat = setInterval(function ping() {
-            roomMap[room].players.forEach((player) => {
-                // console.log(io);
-                console.log(Object.keys(io.connected));
-                console.log(player.socket);
-
-                if (!io.connected[player.socket]) {
-                    io.to(room).emit('disconnect');
-                    resetRoom(room);
-                    clearInterval(heartbeat);
-                }
-            });
-        }, 15000);
-    }
-
-    function nextRound(room) {
-        console.log(magenta, "Next round...");
-        roomMap[room].round.submissions = 0;
-
-        Util.getTrans().then(trans => {
-            roomMap[room].answer = trans.zhSent;
-            io.to(room).emit('next-round', { 'sent': trans.enSent });
-        })
-    }
-
-    function testGuess(answer, guess) {
-        const punct = "“”！。？，\\\"";
-
-        let htmlAnswer = '';
-        let points = 0;
-
-        for (let i of answer) {
-            if (guess.indexOf(i) == -1 || punct.indexOf(i) > -1) {//if a char is punctuation
-                htmlAnswer += colorChar('000000', i) //black
-            }
-            if (guess.indexOf(i) > -1) {//if char is right
-                htmlAnswer += colorChar('7cfc00', i); //green
-                guess = guess.replace(i, '');
-                points++;
-            }
-        }
-
-        return { htmlAnswer, points }
-    }
-
-    function colorChar(color, char) {
-        return `<span style = "color:#${color};">${char}</span>`;
-    }
-
-    function resetRoom(room) {
-        roomMap[room] = new Room()
-
-        // io.in(room).clients((err, socketIds) => {
-        //   if (err) throw err;
-        //   socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(room));
-        // });
-    }
 }
 

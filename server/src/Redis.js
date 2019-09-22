@@ -1,9 +1,6 @@
-module.exports = {
-    getTrans,
+module.exports = { getTrans }
 
-}
 
-// redis server
 let redis = require("redis"),
   redisClient = redis.createClient(process.env.REDIS_URL),
   redisIndex = parseInt(Math.random() * 20000);
