@@ -40,7 +40,7 @@ function startGame(io, room) {
     // end game if no heartbeat
     let heartbeat = setInterval(function ping() {
         roomMap[room].players.forEach((player) => {
-            if (player.uname === "google" || 
+            if (player.uname === "google" ||
                 player.uname === "baidu") return;
             if (!io.connected[player.socket]) {
                 io.to(room).emit('disconnect');
@@ -63,20 +63,21 @@ function nextRound(io, room) {
 }
 
 function testGuess(answer, guess) {
-    const punct = "“”！。？，\\\"";
+    const punctuation = "“”！。？，\\\"";
 
     let htmlAnswer = '';
     let points = 0;
 
     for (let i of answer) {
-        if (guess.indexOf(i) == -1 || punct.indexOf(i) > -1) {//if a char is punctuation
+        // incorrect or punctuation
+        if (guess.indexOf(i) == -1 || punctuation.indexOf(i) > -1) {
             htmlAnswer += colorChar('000000', i) //black
+            continue;
         }
-        if (guess.indexOf(i) > -1) {//if char is right
-            htmlAnswer += colorChar('7cfc00', i); //green
-            guess = guess.replace(i, '');
-            points++;
-        }
+        // correct
+        htmlAnswer += colorChar('7cfc00', i); //green
+        guess = guess.replace(i, '');
+        points++;
     }
 
     return { htmlAnswer, points }
