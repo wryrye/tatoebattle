@@ -40,8 +40,8 @@ function startGame(io, room) {
     // end game if no heartbeat
     let heartbeat = setInterval(function ping() {
         roomMap[room].players.forEach((player) => {
-            if (player.uname === "Google" || 
-                player.uname === "Baidu") return;
+            if (player.uname === "google" || 
+                player.uname === "baidu") return;
             if (!io.connected[player.socket]) {
                 io.to(room).emit('disconnect');
                 resetRoom(room);

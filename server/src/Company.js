@@ -5,14 +5,14 @@ const cyan = "\x1b[36m";
 
 const Game = require('./Game.js');
 
-module.exports = function (io, socket) {
+module.exports = function (io, socket, company) {
 
     (() => {
         for (let [room, info] of Object.entries(Game.roomMap)) {
             if (info.occupancy === 0) {
                 socket.join(room);
                 console.log(green, `Client ${socket.id} has joined ${room}`)
-                console.log(green, `Client Google has joined ${room}`)
+                console.log(green, `Client ${company} has joined ${room}`)
                 socket.emit('accept-join', { room: room, player: 1 });
                 info.occupancy = 2;
                 return;
@@ -29,11 +29,11 @@ module.exports = function (io, socket) {
         const roomInfo = Game.roomMap[room];
 
         console.log(green, `Client ${socket.id} in ${room} is ready`)
-        console.log(green, `Client Google in ${room} is ready`)
+        console.log(green, `Client ${company} in ${room} is ready`)
         roomInfo.players.push(player);
         roomInfo.players.push({
-            'uname': "Google",
-            'master': "google",
+            'uname': company,
+            'master': company,
             'socket': null,
             'player': 2,
         });
@@ -60,10 +60,12 @@ module.exports = function (io, socket) {
 
         let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
 
-        const [googleGuess] = await translate.translate(roomInfo.question, 'zh');
-        let { points: googlePoints } = Game.testGuess(roomInfo.answer, googleGuess);
+        const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
+        const companyGuess = await companyTranslate(roomInfo.question);
 
-        roomInfo.score += points - googlePoints;
+        let { points: companyPoints } = Game.testGuess(roomInfo.answer, companyGuess);
+
+        roomInfo.score += points - companyPoints;
         const score = roomInfo.score;
 
         // player gets prelim results
@@ -90,15 +92,23 @@ module.exports = function (io, socket) {
     });
 }
 
-const { Translate } = require('@google-cloud/translate');
-const projectId = 'tatoebattle'
-const translate = new Translate({ projectId });
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-async function googleTranslate() {
-    const [translation] = await translate.translate(text, 'zh');
+// google
+const { Translate: Google } = require('@google-cloud/translate');
+const google = new Google({ projectId: 'tatoebattle'});
+
+async function googleTranslate(text) {
+    const [translation] = await google.translate(text, 'zh');
     return translation;
 }
 
-const sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms))
+// baidu
+const baidu = require("baidu-translate-api");
+
+async function baiduTranslate(text) {
+    const {trans_result:{dst: translation}} = await baidu(text, {from: 'en', to: 'zh'})
+    return translation;
 }

@@ -10,8 +10,10 @@ io.on('connection', function (socket) {
         randoMode(this, socket);
         break;
       case 'google':
+        companyMode(this, socket, mode);
+        break;
       case 'baidu':
-        companyMode(this, socket);
+        companyMode(this, socket, mode);
         break;
     }
   });
