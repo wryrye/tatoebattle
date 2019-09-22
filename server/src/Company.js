@@ -59,19 +59,23 @@ module.exports = function (io, socket, company) {
         const roomInfo = Game.roomMap[room];
 
         let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
-
-        const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
-        const companyGuess = await companyTranslate(roomInfo.question);
-
-        let { points: companyPoints } = Game.testGuess(roomInfo.answer, companyGuess);
-
-        roomInfo.score += points - companyPoints;
-        const score = roomInfo.score;
+        roomInfo.score += points;
 
         // player gets prelim results
-        socket.emit('prelim', { 'sent': htmlAnswer, score });
+        socket.emit('prelim', { 'sent': htmlAnswer, score: roomInfo.score });
 
-        sleep(4000).then(() => {
+        const timeStart = process.hrtime()
+        const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
+        const companyGuess = await companyTranslate(roomInfo.question);
+        let { points: companyPoints } = Game.testGuess(roomInfo.answer, companyGuess);
+        roomInfo.score -= companyPoints;
+
+        const elapsedTime = process.hrtime(timeStart)[0] * 1000;
+        let remainingTime = 5000 - elapsedTime;
+        remainingTime = remainingTime > 0 ? remainingTime : 0;
+
+        sleep(remainingTime).then(() => {
+            const score = roomInfo.score;
             console.log('Score: ' + score)
 
             // then final results
