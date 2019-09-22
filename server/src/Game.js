@@ -9,6 +9,7 @@ class Room {
 
         this.round = {
             answer: null,
+            question: null,
             first: null,
             submissions: 0
         }
@@ -31,8 +32,6 @@ module.exports = {
     resetRoom
 }
 
-
-
 // helper functions
 function startGame(io, room) {
     io.to(room).emit('start-game', { 'players': roomMap[room].players });
@@ -41,6 +40,8 @@ function startGame(io, room) {
     // end game if no heartbeat
     let heartbeat = setInterval(function ping() {
         roomMap[room].players.forEach((player) => {
+            if (player.uname === "Google" || 
+                player.uname === "Baidu") return;
             if (!io.connected[player.socket]) {
                 io.to(room).emit('disconnect');
                 resetRoom(room);
@@ -56,6 +57,7 @@ function nextRound(io, room) {
 
     Redis.getTrans().then(trans => {
         roomMap[room].answer = trans.zhSent;
+        roomMap[room].question = trans.enSent;
         io.to(room).emit('next-round', { 'sent': trans.enSent });
     })
 }

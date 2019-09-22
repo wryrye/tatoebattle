@@ -28,6 +28,7 @@ services:
     command: bash -c "cd /app && npm install && node index.js"
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/auth/google-translate.json
     depends_on:
       - python
 
