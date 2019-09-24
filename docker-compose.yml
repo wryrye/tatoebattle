@@ -19,7 +19,7 @@ services:
       - redis
 
   server:
-    image: node:carbon
+    image: node:dubnium
     container_name: server
     volumes:
       - ./server:/app
@@ -33,7 +33,7 @@ services:
       - python
 
   client:
-    image: node:carbon
+    image: node:dubnium
     container_name: client
     volumes:
       - ./client:/app
