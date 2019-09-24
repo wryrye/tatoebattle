@@ -55,7 +55,7 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/lobby" exact render={(props) => <Lobby {...props} socket={this.socket} updateInfo={this.updateInfo} />} />
+          <Route path="/lobby/" render={(props) => <Lobby {...props} socket={this.socket} updateInfo={this.updateInfo} />} />
           <Route path="/room/" render={(props) => <Room {...props} socket={this.socket} {...this.userInfo} />} />
           <Redirect to="/lobby" />
         </Switch>

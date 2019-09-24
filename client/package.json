@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "d3": "^5.12.0",
     "i": "^0.3.6",
     "jquery": "^3.4.1",
     "jquery-textfill": "^0.6.0",
