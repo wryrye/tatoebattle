@@ -303,24 +303,25 @@ class Room extends React.Component {
     const { room, player } = this.props;
 
     return (
-      <div>
-        {player === 1 ?
-          <div id="p1">P1</div> :
-          <div id="p2">P2</div>}
+      <div className="h-100 flexing">
+        <div className="d-flex justify-content-between">
+          <div id="p1" className="mx-5">P1</div>
+          <h2 id='room' className="" >{room}</h2>
+          <div id="p2" className="mx-5">P2</div>
+        </div>
 
-        <h2 id='room' >{room}</h2>
+        <div className="row flexible">
+          <img id="player1" className="col-3 mh-100 no-padding" src="" alt="" />
+          <span id="container1" className="col-3 mh-100 no-padding">
+            <canvas id="waves1"></canvas>
+          </span>
+          <span id="container2" className="col-3 mh-100 no-padding">
+            <canvas id="waves2"></canvas>
+          </span>
+          <img id="player2" className="col-3 mh-100 no-padding" src="" alt="" />
+        </div>
 
-        <img id="player1" src="" alt="" />
-        <img id="player2" src="" alt="" />
-        <span id="container1">
-          <canvas id="waves1"></canvas>
-        </span>
-        <span id="container2">
-          <canvas id="waves2"></canvas>
-        </span>
-
-
-        <div id="entry">
+        <div id="entry" className="flexible">
           <div className="textfill"><span id="eng-sent"></span></div>
           <div className="textfill"><span id="chin-sent"></span></div>
           <div className="input-group p-3">
