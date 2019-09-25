@@ -10,9 +10,19 @@ require('jquery-textfill/source/jquery.textfill.min.js');
 var SineWaves = require('sine-waves/sine-waves.min.js');
 
 class Room extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+
+    this.baseWave = {
+      timeModifier: 0.25,
+      lineWidth: 2,
+      amplitude: -100,
+      wavelength: 25
+    }
+
+    this.wavesP1 = [{ ...this.baseWave }];
+    this.wavesP2 = [{ ...this.baseWave }];
+  }
 
   componentDidMount() {
     const { socket, room, player, master } = this.props;
@@ -54,7 +64,7 @@ class Room extends React.Component {
     var opp = player === 1 ? 2 : 1;
 
     $('#player' + me).attr('src', `/assets/images/${master}.png`);
-    
+
 
     var data = {
       'room': room,
@@ -98,13 +108,15 @@ class Room extends React.Component {
       animateWaves(data.score);
     });
 
-    socket.on('final', function (data) {
+    socket.on('final', (data) => {
       if (!isFirst) {
         zhSent.html(data.sent);
         zhSent.parent().textfill({ maxFontPixels: 100 });
       }
 
+      // this.initWaves('add');
       animateWaves(data.score);
+
 
       enSent.html("Next round");
       enSent.addClass("loading");
@@ -165,10 +177,27 @@ class Room extends React.Component {
     }
   }
 
-  initWaves() {
+  initWaves(action) {
     var div = 1;
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       div = 2;
+    }
+
+    // add to streak
+    if (action === 'add') {
+      let newWave = {
+        type: ['Sine', 'Square', 'Sawtooth', 'Triangle'][Math.floor(Math.random() * 4) + 1],
+        timeModifier: .1 + (Math.random() * .1),
+        lineWidth: 1 + (Math.random() * 2),
+        amplitude: 35 + (Math.random() * 100),
+        wavelength: 100 + (Math.random() * 50)
+      };
+
+      if (newWave.type === 'Sine') {
+        newWave.wavelength = 10 + (Math.random() * 20);
+      }
+
+      this.wavesP1.push(newWave);
     }
 
     new SineWaves({
@@ -188,38 +217,7 @@ class Room extends React.Component {
 
       wavesWidth: '100%',
 
-      waves: [
-        {
-          timeModifier: 4,
-          lineWidth: 1,
-          amplitude: -25,
-          wavelength: 25
-        },
-        {
-          timeModifier: 2,
-          lineWidth: 2,
-          amplitude: -40,
-          wavelength: 50
-        },
-        {
-          timeModifier: 1,
-          lineWidth: 1,
-          amplitude: -60,
-          wavelength: 100
-        },
-        {
-          timeModifier: 0.5,
-          lineWidth: 1,
-          amplitude: -75,
-          wavelength: 200
-        },
-        {
-          timeModifier: 0.25,
-          lineWidth: 2,
-          amplitude: -100,
-          wavelength: 400
-        }
-      ],
+      waves: this.wavesP1,
 
       // Called on window resize
       resizeEvent: function () {
@@ -258,38 +256,7 @@ class Room extends React.Component {
 
       wavesWidth: '100%',
 
-      waves: [
-        {
-          timeModifier: 4.2,
-          lineWidth: 1,
-          amplitude: 25,
-          wavelength: 25
-        },
-        {
-          timeModifier: 2.2,
-          lineWidth: 2,
-          amplitude: 40,
-          wavelength: 50
-        },
-        {
-          timeModifier: 1.2,
-          lineWidth: 1,
-          amplitude: 60,
-          wavelength: 100
-        },
-        {
-          timeModifier: 0.52,
-          lineWidth: 1,
-          amplitude: 75,
-          wavelength: 200
-        },
-        {
-          timeModifier: 0.252,
-          lineWidth: 2,
-          amplitude: 100,
-          wavelength: 400
-        }
-      ],
+      waves: this.wavesP2,
 
       // Called on window resize
       resizeEvent: function () {
