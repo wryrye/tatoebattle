@@ -357,9 +357,9 @@ class Room extends React.Component {
           <div className="textfill"><span id="eng-sent"></span></div>
           <div className="textfill"><span id="chin-sent"></span></div>
           <div className="input-group p-3">
-            <input id="text-input" name="searchtext" className="form-control" type="text" />
+            <input id="text-input" name="searchtext" className="form-control" type="text" placeholder="Enter translation..." />
             <span className="input-group-btn">
-              <button className="btn btn-default" type="submit" id="submit-guess">输入</button>
+              <button className="btn btn-default form-control" type="submit" id="submit-guess">&#8620;</button>
             </span>
           </div>
         </div>
