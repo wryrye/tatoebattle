@@ -1,3 +1,3 @@
-web: npm start
-release: python redis-ingest.py
+web: npm run server
+release: python python/redis-ingest.py
 
