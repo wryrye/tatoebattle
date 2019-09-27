@@ -28,7 +28,7 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "server": "cd server && node index.js"
+    "server": "node ./server/index.js"
   },
   "eslintConfig": {
     "extends": "react-app"

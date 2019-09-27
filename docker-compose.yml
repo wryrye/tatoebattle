@@ -25,24 +25,26 @@ services:
       - ./:/app
     ports:
       - "3045:3045"
+      - "5000:5000"
     command: bash -c "cd /app && npm run server"
     environment:
       - REDIS_URL=redis://redis:6379/0
       - GOOGLE_APPLICATION_CREDENTIALS=/app/server/auth/google-translate.json
+      - REACT_APP_SOCKET=127.0.0.1:5000
     depends_on:
       - python
 
-  client:
-    image: node:dubnium
-    container_name: client
-    volumes:
-      - ./:/app
-    ports:
-      - "5663:3000"
-    command: bash -c "cd /app && npm run start"
-    environment:
-      - REACT_APP_SOCKET=127.0.0.1:3045
-    depends_on:
-      - server
+  # client:
+  #   image: node:dubnium
+  #   container_name: client
+  #   volumes:
+  #     - ./:/app
+  #   ports:
+  #     - "5663:3000"
+  #   command: bash -c "cd /app && npm run start"
+  #   environment:
+  #     - REACT_APP_SOCKET=127.0.0.1:3045
+  #   depends_on:
+  #     - server
 
 

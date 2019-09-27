@@ -1,5 +1,22 @@
-// websocket server
-const io = require('socket.io')();
+const path = require('path');
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+const port = process.env.PORT || 5000;
+server.listen(port);
+console.log(`React listening on port: ${port}`);
+
+/** react **/
+app.use(express.static(path.join(__dirname, '/../client/build')));
+
+// catchall
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+});
+
+/** websockets **/
 var randoMode = require('./src/Rando.js');
 var companyMode = require('./src/Company.js');
 
@@ -18,7 +35,3 @@ io.on('connection', function (socket) {
     }
   });
 });
-
-const port = 3045;
-io.listen(port);
-console.log('listening on port:', port);
