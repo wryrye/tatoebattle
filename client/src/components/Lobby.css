@@ -1,7 +1,7 @@
 html, body {
     min-height: 100%;
     height: 100%;
-    background: #4d6aa7;
+    background: #4caf4f;
     font-size: 2vh;
     overflow: hidden;
 }
@@ -42,7 +42,7 @@ html {
 body {
     position: inherit;
     height: 100%;
-    background: #4d6aa7;
+    background: #4caf4f;
 }
 
 /* main {

@@ -44,22 +44,26 @@ class Lobby extends React.Component {
       <div className="HolyGrail">
         <Login {...this.props} />
         <header className="navbar navbar-expand-md navbar-dark bg-dark">
-          <Link className="navbar-brand" to={match.url}>TatoeBattle</Link>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          <div className="container">
+            <img src="/assets/images/tatoebattle.png" width="48" height="48" title="Tatoeba" alt="" />
+            <Link className="navbar-brand" to={match.url}>TatoeBattle</Link>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
 
-          <div className="collapse navbar-collapse" id="navbarsExampleDefault">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to={`${match.url}/about`}>About</Link>
-              </li>
-              <li className="nav-item">
-              <Link className="nav-link" to={`${match.url}/leader-board`}>LeaderBoard</Link>
-              </li>
-            </ul>
+            <div className="collapse navbar-collapse" id="navbarsExampleDefault">
+              <ul className="navbar-nav mr-auto">
+                <li className="nav-item">
+                  <Link className="nav-link" to={`${match.url}/about`}>About</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={`${match.url}/leader-board`}>LeaderBoard</Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </header>
+
         <Switch>
           <Route exact path={`${match.url}/about`} component={About}></Route>
           <Route exact path={`${match.url}/leader-board`} component={LeaderBoard}></Route>
