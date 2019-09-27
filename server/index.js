@@ -9,12 +9,11 @@ server.listen(port);
 console.log(`React listening on port: ${port}`);
 
 /** react **/
-app.use(express.static(path.join(__dirname, '/../client/build')));
-
-// catchall
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-});
+if (process.env.ECOSYSTEM = 'PRODUCTION') {
+  const build = '/../client/build'
+  app.use(express.static(path.join(__dirname, build)));
+  app.get('*', (req, res) => { res.sendFile(path.join(__dirname + `${build}/index.html`))});
+}
 
 /** websockets **/
 var randoMode = require('./src/Rando.js');
