@@ -22,13 +22,13 @@ services:
     image: node:dubnium
     container_name: server
     volumes:
-      - ./server:/app
+      - ./:/app
     ports:
       - "3045:3045"
-    command: bash -c "cd /app && npm install && node index.js"
+    command: bash -c "cd /app && npm run server"
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/auth/google-translate.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/server/auth/google-translate.json
     depends_on:
       - python
 
@@ -36,10 +36,10 @@ services:
     image: node:dubnium
     container_name: client
     volumes:
-      - ./client:/app
+      - ./:/app
     ports:
       - "5663:3000"
-    command: bash -c "cd /app && npm install && npm start"
+    command: bash -c "cd /app && npm run start"
     environment:
       - REACT_APP_SOCKET=127.0.0.1:3045
     depends_on:
