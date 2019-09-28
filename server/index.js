@@ -15,7 +15,7 @@ if (process.env.ECOSYSTEM === 'HEROKU') {
   app.get('*', (req, res) => { res.sendFile(path.join(__dirname + `${build}/index.html`)) });
 
   const fs = require('fs');
-  const jsonPath = '/google-credentials.json'
+  const jsonPath = '/tmp/google-credentials.json'
   fs.writeFile(jsonPath, process.env.GOOGLE_CREDENTIALS_JSON, (err) => {
     if (err) throw err;
     process.env.GOOGLE_APPLICATION_CREDENTIALS = jsonPath
