@@ -130,3 +130,27 @@ img {
 .big-text {
     font-size: 2em;
 }
+
+#nav-wrapper {
+    padding: 10px;
+}
+
+#nav-wrapper a {
+    color: #FFFFFF;
+}
+
+#nav-logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+#nav-brand {
+    font-size: 24px;
+    margin: 0 5px;
+}
+
+.bg-gray {
+    background-color: #414141;
+    border-bottom: 1px solid #000000;
+}

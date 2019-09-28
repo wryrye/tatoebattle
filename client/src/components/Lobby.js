@@ -41,14 +41,15 @@ class Lobby extends React.Component {
     return (
       <div className="HolyGrail">
         <Login {...this.props} />
-        <header className="navbar navbar-expand-md navbar-dark bg-dark">
-          <div className="container">
-            <img src="/assets/images/tatoebattle.png" width="48" height="48" title="Tatoeba" alt="" />
-            <Link className="navbar-brand" to={match.url}>TatoeBattle</Link>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-
+        <nav id="nav-wrapper" className="navbar navbar-expand-md bg-gray">
+          <div id="nav-container" className="container">
+            <div>
+              <img id="nav-logo" src="/assets/images/tatoebattle.png" width="48" height="48" title="Tatoeba" alt="" />
+              <Link id="nav-brand" className="navbar-brand" to={match.url}>TatoeBattle</Link>
+              <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"></span>
+              </button>
+            </div>
             <div className="collapse navbar-collapse" id="navbarsExampleDefault">
               <ul className="navbar-nav mr-auto">
                 <li className="nav-item">
@@ -60,7 +61,7 @@ class Lobby extends React.Component {
               </ul>
             </div>
           </div>
-        </header>
+        </nav>
 
         <Switch>
           <Route exact path={`${match.url}/about`} component={About}></Route>
