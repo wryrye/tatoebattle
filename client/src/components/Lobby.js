@@ -18,14 +18,12 @@ class Lobby extends React.Component {
 
     let registered = document.cookie !== ''
     if (!registered) {
-      console.log("not registered!");
-      $('#exampleModalLong').modal('show');
+      $('#login').modal('show');
     } else {
-      updateInfo(document.cookie)
+      updateInfo(JSON.parse(document.cookie))
     }
 
     socket.removeAllListeners();
-    console.log("hello");
 
     $('.battle').click(function () {
       socket.emit('request-join', $(this).attr('id'));
