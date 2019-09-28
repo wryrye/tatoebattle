@@ -100,3 +100,7 @@ input::placeholder {
   .no-padding {
       padding: 0;
   }
+
+  .test {
+      width: 25%
+  }

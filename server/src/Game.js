@@ -11,7 +11,8 @@ class Room {
             answer: null,
             question: null,
             first: null,
-            submissions: 0
+            submissions: 0,
+            score: 0
         }
     }
 }

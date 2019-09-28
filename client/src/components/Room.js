@@ -114,6 +114,13 @@ class Room extends React.Component {
         zhSent.parent().textfill({ maxFontPixels: 100 });
       }
 
+      console.log(data)
+
+      console.log(data.winner)
+
+      if (data.winner !== null) {
+        this.addWaves(data.winner)
+      }
       animateWaves(data.score);
 
       enSent.html("Next round");
@@ -130,7 +137,7 @@ class Room extends React.Component {
 
       animateWaves(data.score);
 
-      const outcome = player === data.winner ? "赢" : "输";
+      const outcome = player === data.winner ? 'VICTORY' : "DEFEAT";
       enSent.html(outcome);
       enSent.css("font-weight", "bold");
       setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
@@ -149,20 +156,25 @@ class Room extends React.Component {
       }
     });
 
-    this.initWaves();
+    // $("#waves-canvas-P1").width("#waves-wrapper-P1");
+    // $("#waves-canvas-P2").width("#waves-wrapper-P2");
 
-    /** eye candy **/
+
+    this.createWave(1, true);
+    this.createWave(2, true);
+
     var step = parseFloat($('#waves-canvas-P1').css("width")) / 10;
     var baseWidth = parseFloat($('#waves-canvas-P1').css("width"));
     var baseRight = parseFloat($('#waves-canvas-P2').css("right"));;
+    console.log(baseWidth);
+    console.log(baseRight);
 
     function animateWaves(score) {
       let clampScore = Math.min(Math.max(score, -10), 10);
-
       let wavesWidth1 = baseWidth + step * clampScore;
       let wavesWidth2 = baseWidth - step * clampScore;
       let wavesRight2 = baseRight - step * clampScore;
-      console.log("animating")
+      
       $("#waves-canvas-P1").animate({
         width: wavesWidth1,
       }, 3000, function () {
@@ -173,12 +185,54 @@ class Room extends React.Component {
       }, 3000, function () {
       });
     }
+
+
   }
 
-  initWaves(action) {
+  createWave(player, init) {
+    const wrapper = $(`#waves-wrapper-P${player}`);
+    const canvas = $(`#waves-canvas-P${player}`)
 
-    // add to streak
-    if (action === 'add') {
+    const rgbaStr = player === 1 ? 
+      "rgba(255, 0, 0, 0.2)" :
+      "rgba(23, 210, 168, 0.2)"
+
+    new SineWaves({
+      el: canvas[0],
+      speed: 30,
+      width: () => { return wrapper.width(); },
+      height: () => { return wrapper.height(); },
+      ease: 'SineInOut',
+      wavesWidth: '100%',
+      waves: this[`wavesP${player}`],
+      resizeEvent: this.getResizeEvent(rgbaStr)
+    });
+
+    console.log(SineWaves)
+  }
+
+  getResizeEvent = function (rgbaStr) {
+    console.log(rgbaStr)
+    return function () {
+      var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
+      gradient.addColorStop(0, rgbaStr);
+      gradient.addColorStop(0.5, "rgba(255, 255, 255, 1)");
+      gradient.addColorStop(1, rgbaStr);
+
+      var index = -1;
+      var length = this.waves.length;
+      while (++index < length) {
+        this.waves[index].strokeStyle = gradient;
+      }
+
+      // Clean Up
+      index = void 0;
+      length = void 0;
+      gradient = void 0;
+    }
+  }
+
+  addWaves(winner) {
       let newWave = {
         type: ['Sine', 'Square', 'Sawtooth', 'Triangle'][Math.floor(Math.random() * 4) + 1],
         timeModifier: .1 + (Math.random() * .1),
@@ -191,86 +245,25 @@ class Room extends React.Component {
         newWave.wavelength = 10 + (Math.random() * 20);
       }
 
-      this.wavesP1.push(newWave);
-    }
-
-    new SineWaves({
-      el: document.getElementById('waves-canvas-P1'),
-
-      speed: 30,
-
-      width: function () {
-        return $('#waves-wrapper-P1').width();
-      },
-
-      height: function () {
-        return $('#waves-wrapper-P1').height();
-      },
-
-      ease: 'SineInOut',
-
-      wavesWidth: '100%',
-
-      waves: this.wavesP1,
-
-      // Called on window resize
-      resizeEvent: function () {
-        var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
-        gradient.addColorStop(0, "rgba(255, 0, 0, 0.2)");
-        gradient.addColorStop(0.5, "rgba(255, 255, 255, 1)");
-        gradient.addColorStop(1, "rgba(255, 0, 0, 0.2)");
-
-        var index = -1;
-        var length = this.waves.length;
-        while (++index < length) {
-          this.waves[index].strokeStyle = gradient;
-        }
-
-        // Clean Up
-        index = void 0;
-        length = void 0;
-        gradient = void 0;
+      if (winner === 1) {
+        this[`wavesP1`].push(newWave);
+        this[`wavesP2`] =[{ ...this.baseWave }];
+      } else {
+        this[`wavesP2`].push(newWave);
+        this[`wavesP1`] =[{ ...this.baseWave }];
       }
-    });
 
-    new SineWaves({
-      el: document.getElementById('waves-canvas-P2'),
+      const wavesCanvasP1 = $(`#waves-canvas-P1`);
+      const wavesCanvasP2 = $(`#waves-canvas-P2`);
 
-      speed: 30,
+      const widthP1 = wavesCanvasP1.width();
+      const widthP2 = wavesCanvasP2.width();
 
-      width: function () {
-        return $('#waves-wrapper-P2').width();
-      },
+      this.createWave(1);
+      this.createWave(2);
 
-      height: function () {
-        return $('#waves-wrapper-P2').height();
-      },
-
-      ease: 'SineInOut',
-
-      wavesWidth: '100%',
-
-      waves: this.wavesP2,
-
-      // Called on window resize
-      resizeEvent: function () {
-        var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
-        gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
-        gradient.addColorStop(0.5, "rgba(255, 255, 255, 1)");
-        gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
-
-        var index = -1;
-        var length = this.waves.length;
-        while (++index < length) {
-          this.waves[index].strokeStyle = gradient;
-        }
-
-        // Clean Up
-        index = void 0;
-        length = void 0;
-        gradient = void 0;
-      }
-    });
+      wavesCanvasP1.width(widthP1);
+      wavesCanvasP2.width(widthP2);
   }
 
 
@@ -287,10 +280,10 @@ class Room extends React.Component {
 
         <div className="row flexible">
           <img id="avatar-P1" className="col-3 mh-100 no-padding" src="" alt="" />
-          <span id="waves-wrapper-P1" className="col-3 mh-100 no-padding">
+          <span id="waves-wrapper-P1" className="test mh-100 no-padding">
             <canvas id="waves-canvas-P1" className="waves"></canvas>
           </span>
-          <span id="waves-wrapper-P2" className="col-3 mh-100 no-padding">
+          <span id="waves-wrapper-P2" className="test mh-100 no-padding">
             <canvas id="waves-canvas-P2" className="waves"></canvas>
           </span>
           <img id="avatar-P2" className="col-3 mh-100 no-padding" src="" alt="" />

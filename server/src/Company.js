@@ -59,28 +59,35 @@ module.exports = function (io, socket, company) {
         const roomInfo = Game.roomMap[room];
 
         let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
-        roomInfo.score += points;
+        roomInfo.round.score += points;
 
         // player gets prelim results
-        socket.emit('prelim', { 'sent': htmlAnswer, score: roomInfo.score });
+        socket.emit('prelim', { 'sent': htmlAnswer, score: roomInfo.score + roomInfo.round.score });
 
         const timeStart = process.hrtime()
         const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
         const companyGuess = await companyTranslate(roomInfo.question);
         let { points: companyPoints } = Game.testGuess(roomInfo.answer, companyGuess);
-        roomInfo.score -= companyPoints;
+        roomInfo.round.score -= companyPoints;
 
         const elapsedTime = process.hrtime(timeStart)[0] * 1000;
         let remainingTime = 5000 - elapsedTime;
         remainingTime = remainingTime > 0 ? remainingTime : 0;
 
         sleep(remainingTime).then(() => {
+            let winner = null;
+            if (roomInfo.round.score > 0) {
+                winner = 'P1';
+            } else if (roomInfo.round.score < 0) {
+                winner = 'P2';
+            }
+
             const score = roomInfo.score;
             console.log('Score: ' + score)
 
             // then final results
             if (-10 < score && score < 10) {
-                io.to(room).emit('final', { 'sent': htmlAnswer, score });
+                io.to(room).emit('final', { 'sent': htmlAnswer, score, winner });
                 roomInfo.round.first = null
             } else { // winning score has been reached, game over!
                 const winner = score >= 10 ? 1 : 2;

@@ -48,28 +48,35 @@ module.exports = function (io, socket) {
     socket.on('submit-guess', function (data) {
         const { room, player, guess } = data;
         const roomInfo = Game.roomMap[room];
+        const roundInfo = roomInfo.round;
         const isFirst = roomInfo.round.first === null;
         const isP1 = player === 1;
 
         let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
-        points = isP1 ? points : -points;
-
-        roomInfo.score += points;
-        const score = roomInfo.score;
+        roundInfo.score += isP1 ? points : -points;
 
         // first gets prelim results
         if (isFirst) {
-            roomInfo.round.first = player
+            roundInfo.first = player
+            const score = roomInfo.score + roundInfo.score;
             socket.emit('prelim', { 'sent': htmlAnswer, score });
         } else {
+            let winner = null;
+            if (roomInfo.round.score > 0) {
+                winner = 1;
+            } else if (roomInfo.round.score < 0) {
+                winner = 2;
+            }
+
+            const score = roomInfo.score += roundInfo.score;
             console.log('Score: ' + score)
 
             // both get final results
             if (-10 < score && score < 10) {
-                io.to(room).emit('final', { 'sent': htmlAnswer, score });
+                io.to(room).emit('final', { 'sent': htmlAnswer, score, winner });
                 roomInfo.round.first = null
+                roomInfo.round.score = null;
             } else { // winning score has been reached, game over!
-                const winner = score >= 10 ? 1 : 2;
                 console.log(cyan, `Player ${winner} has won!`)
                 io.to(room).emit('game-over', { 'sent': htmlAnswer, score, winner });
                 Game.resetRoom(room);
