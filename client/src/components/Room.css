@@ -73,12 +73,7 @@
 
 /*--------------------------WAVE CSS-----------------------------------------------------------------------*/
 
-#waves1 {
-    position: relative;
-    z-index: 0;
-}
-
-#waves2 {
+.waves {
     position: relative;
     z-index: 0;
 }

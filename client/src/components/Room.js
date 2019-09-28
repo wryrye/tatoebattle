@@ -63,7 +63,7 @@ class Room extends React.Component {
     var me = player === 1 ? 1 : 2;
     var opp = player === 1 ? 2 : 1;
 
-    $('#player' + me).attr('src', `/assets/images/${master}.png`);
+    $('#avatar-P' + me).attr('src', `/assets/images/${master}.png`);
 
 
     var data = {
@@ -89,7 +89,7 @@ class Room extends React.Component {
     var isFirst = null;
 
     socket.on('start-game', function (data) {
-      $('#player' + opp).attr("src", `/assets/images/${data.players[parseInt(opp) - 1].master}.png`);
+      $('#avatar-P' + opp).attr("src", `/assets/images/${data.players[parseInt(opp) - 1].master}.png`);
     });
 
     socket.on('next-round', function (data) {
@@ -114,9 +114,7 @@ class Room extends React.Component {
         zhSent.parent().textfill({ maxFontPixels: 100 });
       }
 
-      // this.initWaves('add');
       animateWaves(data.score);
-
 
       enSent.html("Next round");
       enSent.addClass("loading");
@@ -154,9 +152,9 @@ class Room extends React.Component {
     this.initWaves();
 
     /** eye candy **/
-    var step = parseFloat($('#waves1').css("width")) / 10;
-    var baseWidth = parseFloat($('#waves1').css("width"));
-    var baseRight = parseFloat($('#waves2').css("right"));;
+    var step = parseFloat($('#waves-canvas-P1').css("width")) / 10;
+    var baseWidth = parseFloat($('#waves-canvas-P1').css("width"));
+    var baseRight = parseFloat($('#waves-canvas-P2').css("right"));;
 
     function animateWaves(score) {
       let clampScore = Math.min(Math.max(score, -10), 10);
@@ -165,11 +163,11 @@ class Room extends React.Component {
       let wavesWidth2 = baseWidth - step * clampScore;
       let wavesRight2 = baseRight - step * clampScore;
       console.log("animating")
-      $("#waves1").animate({
+      $("#waves-canvas-P1").animate({
         width: wavesWidth1,
       }, 3000, function () {
       });
-      $("#waves2").animate({
+      $("#waves-canvas-P2").animate({
         width: wavesWidth2,
         right: wavesRight2,
       }, 3000, function () {
@@ -178,10 +176,6 @@ class Room extends React.Component {
   }
 
   initWaves(action) {
-    var div = 1;
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      div = 2;
-    }
 
     // add to streak
     if (action === 'add') {
@@ -201,16 +195,16 @@ class Room extends React.Component {
     }
 
     new SineWaves({
-      el: document.getElementById('waves1'),
+      el: document.getElementById('waves-canvas-P1'),
 
       speed: 30,
 
       width: function () {
-        return $('.waves-wrapper').width();
+        return $('#waves-wrapper-P1').width();
       },
 
       height: function () {
-        return $('.waves-wrapper').height() / div;
+        return $('#waves-wrapper-P1').height();
       },
 
       ease: 'SineInOut',
@@ -240,16 +234,16 @@ class Room extends React.Component {
     });
 
     new SineWaves({
-      el: document.getElementById('waves2'),
+      el: document.getElementById('waves-canvas-P2'),
 
       speed: 30,
 
       width: function () {
-        return $('.waves-wrapper').width();
+        return $('#waves-wrapper-P2').width();
       },
 
       height: function () {
-        return $('.waves-wrapper').height() / div;
+        return $('#waves-wrapper-P2').height();
       },
 
       ease: 'SineInOut',
@@ -292,14 +286,14 @@ class Room extends React.Component {
         </div>
 
         <div className="row flexible">
-          <img id="player1" className="col-3 mh-100 no-padding" src="" alt="" />
-          <span className="waves-wrapper col-3 mh-100 no-padding">
-            <canvas id="waves1"></canvas>
+          <img id="avatar-P1" className="col-3 mh-100 no-padding" src="" alt="" />
+          <span id="waves-wrapper-P1" className="col-3 mh-100 no-padding">
+            <canvas id="waves-canvas-P1" className="waves"></canvas>
           </span>
-          <span className="waves-wrapper col-3 mh-100 no-padding">
-            <canvas id="waves2"></canvas>
+          <span id="waves-wrapper-P2" className="col-3 mh-100 no-padding">
+            <canvas id="waves-canvas-P2" className="waves"></canvas>
           </span>
-          <img id="player2" className="col-3 mh-100 no-padding" src="" alt="" />
+          <img id="avatar-P2" className="col-3 mh-100 no-padding" src="" alt="" />
         </div>
 
         <div id="entry" className="flexible">
