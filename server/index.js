@@ -8,11 +8,19 @@ const port = process.env.PORT || 5000;
 server.listen(port);
 console.log(`React listening on port: ${port}`);
 
-/** react **/
-if (process.env.ECOSYSTEM = 'PRODUCTION') {
+/** heroku **/
+if (process.env.ECOSYSTEM === 'HEROKU') {
   const build = '/../client/build'
   app.use(express.static(path.join(__dirname, build)));
-  app.get('*', (req, res) => { res.sendFile(path.join(__dirname + `${build}/index.html`))});
+  app.get('*', (req, res) => { res.sendFile(path.join(__dirname + `${build}/index.html`)) });
+
+  const fs = require('fs');
+  const jsonPath = '/google-credentials.json'
+  fs.writeFile(jsonPath, process.env.GOOGLE_CREDENTIALS_JSON, (err) => {
+    if (err) throw err;
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = jsonPath
+    console.log('Google credentials written to file!');
+  });
 }
 
 /** websockets **/

@@ -3,7 +3,9 @@ TatoeBattle
 Heroku:
 - Add Node and Python buildpacks
 - Add Redis add-on
-- Add "ECOSYSTEM=PRODUCTION" config var
+- Add "ECOSYSTEM=HEROKU" config var
+- Run commands in Heroku CLI:
+    $ heroku config:set -a tatoebattle GOOGLE_CREDENTIALS_JSON="$(< $PATH)"
 
 Docker Compose:
-- Run "sudo docker-compose up" at root
+- Run command "sudo docker-compose up" at project root

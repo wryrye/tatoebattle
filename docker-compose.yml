@@ -28,7 +28,7 @@ services:
     command: bash -c "cd /app && npm run server"
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/server/auth/google-translate.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/server/auth/google-credentials.json
     depends_on:
       - python
 
