@@ -39,7 +39,7 @@ class Lobby extends React.Component {
     const { match } = this.props;
 
     return (
-      <div className="HolyGrail">
+      <div id="lobby" className="HolyGrail">
         <Login {...this.props} />
         <nav id="nav-wrapper" className="navbar navbar-expand-md bg-gray">
           <div id="nav-container" className="container">

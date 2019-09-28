@@ -206,11 +206,11 @@ class Room extends React.Component {
       speed: 30,
 
       width: function () {
-        return $('#container1').width();
+        return $('.waves-wrapper').width();
       },
 
       height: function () {
-        return $('#container1').height() / div;
+        return $('.waves-wrapper').height() / div;
       },
 
       ease: 'SineInOut',
@@ -245,11 +245,11 @@ class Room extends React.Component {
       speed: 30,
 
       width: function () {
-        return $('#container2').width();
+        return $('.waves-wrapper').width();
       },
 
       height: function () {
-        return $('#container2').height() / div;
+        return $('.waves-wrapper').height() / div;
       },
 
       ease: 'SineInOut',
@@ -277,25 +277,6 @@ class Room extends React.Component {
         gradient = void 0;
       }
     });
-
-    // var resizeWave = function (wave, width) {
-    //   var gradient = wave.ctx.createLinearGradient(0, 0, width, 0);
-    //   gradient.addColorStop(0, "rgba(23, 210, 168, 0.2)");
-    //   gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.5)");
-    //   gradient.addColorStop(1, "rgba(23, 210, 168, 0.2)");
-
-    //   var index = -1;
-    //   var length = wave.waves.length;
-    //   while (++index < length) {
-    //     wave.waves[index].strokeStyle = gradient;
-    //   }
-
-    //   // Clean Up
-    //   index = void 0;
-    //   length = void 0;
-    //   gradient = void 0;
-    // }
-
   }
 
 
@@ -303,19 +284,19 @@ class Room extends React.Component {
     const { room, player } = this.props;
 
     return (
-      <div className="h-100 flexing">
+      <div id="room" className="h-100 flexing">
         <div className="d-flex justify-content-between">
-          <div id="p1" className="mx-5">P1</div>
-          <h2 id='room' className="" >{room}</h2>
-          <div id="p2" className="mx-5">P2</div>
+          <div id="P1" className="player mx-5">P1</div>
+          <h2 id="room-name" className="" >{room}</h2>
+          <div id="P2" className="player mx-5">P2</div>
         </div>
 
         <div className="row flexible">
           <img id="player1" className="col-3 mh-100 no-padding" src="" alt="" />
-          <span id="container1" className="col-3 mh-100 no-padding">
+          <span className="waves-wrapper col-3 mh-100 no-padding">
             <canvas id="waves1"></canvas>
           </span>
-          <span id="container2" className="col-3 mh-100 no-padding">
+          <span className="waves-wrapper col-3 mh-100 no-padding">
             <canvas id="waves2"></canvas>
           </span>
           <img id="player2" className="col-3 mh-100 no-padding" src="" alt="" />

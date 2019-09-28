@@ -1,3 +1,7 @@
+#room {
+    background: #4d6aa7
+}
+
 @keyframes ellipsis {
     from {
         width: 0em;
@@ -16,7 +20,7 @@
     position: absolute;
 }
 
-#room {
+#room-name {
     position: relative;
     font-size: 6em;
     text-shadow: -8px 0 red, 0 8px yellow, 8px 0 blue, 0 -8px red;
@@ -26,32 +30,16 @@
     padding-top: 10px;
 }
 
-#player1 {
-    /* position: absolute;
-    width: 15%;
-    transform: scaleX(-1);
-    z-index: 1; */
-}
-
-#player2 {
-    /* position: absolute;
-    width: 15%;
-    right: 0px;
-    z-index: 1; */
-}
-
-#p1 {
-    /* position: absolute; */
+.player {
     font-size: 6em;
+}
+
+#P1 {
     text-shadow: 5px 5px 5px red;
-    left: 25px;
 }
 
-#p2 {
-    /* position: absolute; */
-    font-size: 6em;
+#P2 {
     text-shadow: 5px 5px 5px blue;
-    right: 25px;
 }
 
 #entry {
@@ -84,20 +72,6 @@
 
 
 /*--------------------------WAVE CSS-----------------------------------------------------------------------*/
-
-#container1 {
-    /* position: absolute;
-    left: 15%;
-    width: 35%;
-    height: 205px; */
-}
-
-#container2 {
-    /* position: absolute;
-    right: 15%;
-    width: 35%;
-    height: 205px; */
-}
 
 #waves1 {
     position: relative;
