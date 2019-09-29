@@ -26,7 +26,6 @@ class Room extends React.Component {
 
   componentDidMount() {
     const { socket, room, player, master } = this.props;
-    console.log('socketID:' + socket.id);
 
     if (!room || !player || !master) {
       let queryString = this.props.location.search;
@@ -35,30 +34,14 @@ class Room extends React.Component {
       console.log(this.props);
     }
 
-
-    /** mobile-friendly **/
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      console.log(window.innerHeight);
-      console.log(window.innerWidth);
-      if (window.innerHeight > window.innerWidth) {
-        window.alert("Please use Landscape!");
-      }
-      $("#room").css("font-size", "8em");
-      $("#room").css("text-shadow", "-2px 0 red, 0 2px yellow, 2px 0 blue, 0 -2px red");
-    }
-
     var zhSent = $('#chin-sent');
-
     var enSent = $('#eng-sent');
+
     enSent.html("等待对手");
     enSent.addClass("loading");
     enSent.parent().textfill({ maxFontPixels: 100 });
 
     $('#submit-guess').prop("disabled", true);
-
-    /** initialize things **/
-    var uname = "trash"
-    // var master = JSON.parse(document.cookie).master;
 
     var me = player === 1 ? 1 : 2;
     var opp = player === 1 ? 2 : 1;
@@ -69,11 +52,9 @@ class Room extends React.Component {
     var data = {
       'room': room,
       'player': {
-        'uname': uname,
         'master': master,
         'socket': socket.id,
         'player': player,
-        'test': "ugh"
       }
     }
     socket.emit('ready-start', data);
@@ -93,53 +74,62 @@ class Room extends React.Component {
     });
 
     socket.on('next-round', function (data) {
+      const { question } = data;
+
       enSent.removeClass("loading");
-      console.log(JSON.stringify(data))
-      enSent.html(data.sent);
+      enSent.html(question);
       enSent.parent().textfill({ maxFontPixels: 100 });
+
       zhSent.empty();
+
       $('#submit-guess').prop("disabled", false);
     });
 
     socket.on('prelim', function (data) {
+      const { answer, score } = data;
+
       isFirst = true;
-      zhSent.html(data.sent);
+
+      zhSent.html(answer);
       zhSent.parent().textfill({ maxFontPixels: 100 });
-      animateWaves(data.score);
+
+      animateWaves(score);
     });
 
     socket.on('final', (data) => {
+      const { answer, winner, score } = data;
+
       if (!isFirst) {
-        zhSent.html(data.sent);
+        zhSent.html(answer);
         zhSent.parent().textfill({ maxFontPixels: 100 });
+        isFirst = null;
       }
 
-      console.log(data)
-
-      console.log(data.winner)
-
-      if (data.winner !== null) {
-        this.addWaves(data.winner)
+      if (winner !== null) {
+        this.addWaves(winner)
       }
-      animateWaves(data.score);
+
+      animateWaves(score);
 
       enSent.html("Next round");
       enSent.addClass("loading");
+
       setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
-      isFirst = null;
     });
 
     socket.on('game-over', function (data) {
+      const { answer, winner, score } = data;
+
       if (!isFirst) {
-        zhSent.html(data.sent);
+        zhSent.html(answer);
         zhSent.parent().textfill({ maxFontPixels: 100 });
       }
 
-      animateWaves(data.score);
+      animateWaves(score);
 
-      const outcome = player === data.winner ? 'VICTORY' : "DEFEAT";
-      enSent.html(outcome);
       enSent.css("font-weight", "bold");
+      enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
+
       setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
     });
 
@@ -147,6 +137,7 @@ class Room extends React.Component {
       enSent.html("Opponent disconnected...");
       enSent.css("color", "red");
       enSent.css("font-weight", "bold");
+
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
     });
 
@@ -155,10 +146,6 @@ class Room extends React.Component {
         $('#submit-guess').click()
       }
     });
-
-    // $("#waves-canvas-P1").width("#waves-wrapper-P1");
-    // $("#waves-canvas-P2").width("#waves-wrapper-P2");
-
 
     this.createWave(1, true);
     this.createWave(2, true);

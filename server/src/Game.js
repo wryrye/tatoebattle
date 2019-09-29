@@ -19,7 +19,7 @@ class Room {
 
 const roomMap = {}
 
-const roomList = ['Beijing', 'Hong Kobng', 'Suzhou', 'Guilin']
+const roomList = ['Beijing', 'Hong Kong', 'Suzhou', 'Guilin']
 
 roomList.forEach((name) => {
     roomMap[name] = new Room();
@@ -30,7 +30,8 @@ module.exports = {
     startGame,
     nextRound,
     testGuess,
-    resetRoom
+    resetRoom,
+    resetRound
 }
 
 // helper functions
@@ -57,9 +58,9 @@ function nextRound(io, room) {
     roomMap[room].round.submissions = 0;
 
     Redis.getTrans().then(trans => {
-        roomMap[room].answer = trans.zhSent;
-        roomMap[room].question = trans.enSent;
-        io.to(room).emit('next-round', { 'sent': trans.enSent });
+        roomMap[room].round.answer = trans.zhSent;
+        roomMap[room].round.question = trans.enSent;
+        io.to(room).emit('next-round', { question: trans.enSent });
     })
 }
 
@@ -95,4 +96,14 @@ function resetRoom(room) {
     //   if (err) throw err;
     //   socketIds.forEach(socketId => io.sockets.sockets[socketId].leave(room));
     // });
+}
+
+function resetRound(room) {
+    roomMap[room].round = {
+        answer: null,
+        question: null,
+        first: null,
+        submissions: 0,
+        score: 0
+    }
 }

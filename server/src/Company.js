@@ -53,46 +53,50 @@ module.exports = function (io, socket, company) {
         }
     });
 
-    // evaluate submission
+    // evaluate guess
     socket.on('submit-guess', async function (data) {
         const { room, player, guess } = data;
         const roomInfo = Game.roomMap[room];
+        const roundInfo = roomInfo.round;
 
-        let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
-        roomInfo.round.score += points;
+        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess)
+        roundInfo.score += points;
+
+        let score = roomInfo.score + roundInfo.score;
 
         // player gets prelim results
-        socket.emit('prelim', { 'sent': htmlAnswer, score: roomInfo.score + roomInfo.round.score });
+        socket.emit('prelim', { answer: htmlAnswer, score });
 
+        // company guess
         const timeStart = process.hrtime()
         const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
-        const companyGuess = await companyTranslate(roomInfo.question);
-        let { points: companyPoints } = Game.testGuess(roomInfo.answer, companyGuess);
-        roomInfo.round.score -= companyPoints;
-
+        const companyGuess = await companyTranslate(roundInfo.question);
+        let { points: companyPoints } = Game.testGuess(roundInfo.answer, companyGuess);
+        roundInfo.score -= companyPoints;
         const elapsedTime = process.hrtime(timeStart)[0] * 1000;
+
         let remainingTime = 5000 - elapsedTime;
         remainingTime = remainingTime > 0 ? remainingTime : 0;
 
         sleep(remainingTime).then(() => {
             let winner = null;
-            if (roomInfo.round.score > 0) {
+            if (roundInfo.score > 0) {
                 winner = 'P1';
-            } else if (roomInfo.round.score < 0) {
+            } else if (roundInfo.score < 0) {
                 winner = 'P2';
             }
 
-            const score = roomInfo.score;
-            console.log('Score: ' + score)
+            const score = roomInfo.score += roundInfo.score;
 
             // then final results
             if (-10 < score && score < 10) {
-                io.to(room).emit('final', { 'sent': htmlAnswer, score, winner });
-                roomInfo.round.first = null
+                console.log('Score: ' + score)
+                io.to(room).emit('final', { answer: htmlAnswer, score, winner });
+                Game.resetRound(room)
             } else { // winning score has been reached, game over!
                 const winner = score >= 10 ? 1 : 2;
                 console.log(cyan, `Player ${winner} has won!`)
-                io.to(room).emit('game-over', { 'sent': htmlAnswer, score, winner });
+                io.to(room).emit('game-over', { answer: htmlAnswer, score, winner });
                 Game.resetRoom(room);
             }
         })

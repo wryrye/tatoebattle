@@ -44,41 +44,40 @@ module.exports = function (io, socket) {
         }
     });
 
-    // evaluate submission
+    // evaluate guess
     socket.on('submit-guess', function (data) {
         const { room, player, guess } = data;
         const roomInfo = Game.roomMap[room];
         const roundInfo = roomInfo.round;
-        const isFirst = roomInfo.round.first === null;
+        const isFirst = roundInfo.first === null;
         const isP1 = player === 1;
 
-        let { htmlAnswer, points } = Game.testGuess(roomInfo.answer, guess)
+        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess)
         roundInfo.score += isP1 ? points : -points;
 
         // first gets prelim results
         if (isFirst) {
             roundInfo.first = player
             const score = roomInfo.score + roundInfo.score;
-            socket.emit('prelim', { 'sent': htmlAnswer, score });
+            socket.emit('prelim', { answer: htmlAnswer, score });
         } else {
             let winner = null;
-            if (roomInfo.round.score > 0) {
+            if (roundInfo.score > 0) {
                 winner = 1;
-            } else if (roomInfo.round.score < 0) {
+            } else if (roundInfo.score < 0) {
                 winner = 2;
             }
 
             const score = roomInfo.score += roundInfo.score;
-            console.log('Score: ' + score)
 
             // both get final results
             if (-10 < score && score < 10) {
-                io.to(room).emit('final', { 'sent': htmlAnswer, score, winner });
-                roomInfo.round.first = null
-                roomInfo.round.score = null;
+                console.log('Score: ' + score)
+                io.to(room).emit('final', { answer: htmlAnswer, score, winner });
+                Game.resetRound(room)
             } else { // winning score has been reached, game over!
                 console.log(cyan, `Player ${winner} has won!`)
-                io.to(room).emit('game-over', { 'sent': htmlAnswer, score, winner });
+                io.to(room).emit('game-over', { answer: htmlAnswer, score, winner });
                 Game.resetRoom(room);
             }
         }
@@ -88,4 +87,3 @@ module.exports = function (io, socket) {
         console.log(red, `Someone has disconnected`)
     });
 }
-

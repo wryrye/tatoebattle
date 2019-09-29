@@ -37,15 +37,15 @@ class App extends React.Component {
 
     this.updateInfo = this.updateInfo.bind(this);
 
-    if (document.cookie) {
-      this.updateInfo(JSON.parse(document.cookie));
-    }
+    // if (document.cookie) {
+    //   console.log(document.cookie)
+    //   this.updateInfo(JSON.parse(document.cookie));
+    // }
   }
 
   updateInfo(data) {
     console.log("Updating info: " + JSON.stringify(data));
     Object.assign(this.userInfo, data)
-    document.cookie = JSON.stringify(this.userInfo);
   }
 
   render() {
