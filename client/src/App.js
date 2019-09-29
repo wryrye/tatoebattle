@@ -46,6 +46,7 @@ class App extends React.Component {
   updateInfo(data) {
     console.log("Updating info: " + JSON.stringify(data));
     Object.assign(this.userInfo, data)
+    document.cookie = JSON.stringify(this.userInfo)
   }
 
   render() {
