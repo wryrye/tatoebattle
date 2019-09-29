@@ -19,7 +19,7 @@ class Room {
 
 const roomMap = {}
 
-const roomList = ['北京', '香港', '苏州', '桂林']
+const roomList = ['Beijing', 'Hong Kobng', 'Suzhou', 'Guilin']
 
 roomList.forEach((name) => {
     roomMap[name] = new Room();
