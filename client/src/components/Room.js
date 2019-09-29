@@ -22,6 +22,10 @@ class Room extends React.Component {
 
     this.wavesP1 = [{ ...this.baseWave }];
     this.wavesP2 = [{ ...this.baseWave }];
+
+    this.canvasRight = null;
+    this.canvasWidth = null;
+    this.canvasUnit = null;
   }
 
   componentDidMount() {
@@ -33,6 +37,12 @@ class Room extends React.Component {
       this.props = queryObject;
       console.log(this.props);
     }
+
+    $("#text-input").keyup(function (event) {
+      if (event.keyCode === 13) {
+        $('#submit-guess').click()
+      }
+    });
 
     var zhSent = $('#chin-sent');
     var enSent = $('#eng-sent');
@@ -69,11 +79,11 @@ class Room extends React.Component {
     /** listens for results **/
     var isFirst = null;
 
-    socket.on('start-game', function (data) {
+    socket.on('start-game', (data) => {
       $('#avatar-P' + opp).attr("src", `/assets/images/${data.players[parseInt(opp) - 1].master}.png`);
     });
 
-    socket.on('next-round', function (data) {
+    socket.on('next-round', (data) => {
       const { question } = data;
 
       enSent.removeClass("loading");
@@ -85,7 +95,7 @@ class Room extends React.Component {
       $('#submit-guess').prop("disabled", false);
     });
 
-    socket.on('prelim', function (data) {
+    socket.on('prelim', (data) => {
       const { answer, score } = data;
 
       isFirst = true;
@@ -93,7 +103,7 @@ class Room extends React.Component {
       zhSent.html(answer);
       zhSent.parent().textfill({ maxFontPixels: 100 });
 
-      animateWaves(score);
+      this.animateWaves(score);
     });
 
     socket.on('final', (data) => {
@@ -105,11 +115,8 @@ class Room extends React.Component {
         isFirst = null;
       }
 
-      if (winner !== null) {
-        this.addWaves(winner)
-      }
-
-      animateWaves(score);
+      if (winner !== null) this.addWave(winner)
+      this.animateWaves(score);
 
       enSent.html("Next round");
       enSent.addClass("loading");
@@ -117,7 +124,7 @@ class Room extends React.Component {
       setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
     });
 
-    socket.on('game-over', function (data) {
+    socket.on('game-over', (data) => {
       const { answer, winner, score } = data;
 
       if (!isFirst) {
@@ -125,7 +132,8 @@ class Room extends React.Component {
         zhSent.parent().textfill({ maxFontPixels: 100 });
       }
 
-      animateWaves(score);
+      if (winner !== null) this.addWave(winner)
+      this.animateWaves(score);
 
       enSent.css("font-weight", "bold");
       enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
@@ -141,39 +149,12 @@ class Room extends React.Component {
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
     });
 
-    $("#text-input").keyup(function (event) {
-      if (event.keyCode === 13) {
-        $('#submit-guess').click()
-      }
-    });
-
     this.createWave(1, true);
     this.createWave(2, true);
 
-    var step = parseFloat($('#waves-canvas-P1').css("width")) / 10;
-    var baseWidth = parseFloat($('#waves-canvas-P1').css("width"));
-    var baseRight = parseFloat($('#waves-canvas-P2').css("right"));;
-    console.log(baseWidth);
-    console.log(baseRight);
-
-    function animateWaves(score) {
-      let clampScore = Math.min(Math.max(score, -10), 10);
-      let wavesWidth1 = baseWidth + step * clampScore;
-      let wavesWidth2 = baseWidth - step * clampScore;
-      let wavesRight2 = baseRight - step * clampScore;
-      
-      $("#waves-canvas-P1").animate({
-        width: wavesWidth1,
-      }, 3000, function () {
-      });
-      $("#waves-canvas-P2").animate({
-        width: wavesWidth2,
-        right: wavesRight2,
-      }, 3000, function () {
-      });
-    }
-
-
+    this.canvasRight = parseFloat($('#waves-canvas-P2').css("right"));
+    this.canvasWidth = parseFloat($('#waves-canvas-P1').css("width"));
+    this.canvasUnit = this.canvasWidth / 10;
   }
 
   createWave(player, init) {
@@ -194,12 +175,9 @@ class Room extends React.Component {
       waves: this[`wavesP${player}`],
       resizeEvent: this.getResizeEvent(rgbaStr)
     });
-
-    console.log(SineWaves)
   }
 
   getResizeEvent = function (rgbaStr) {
-    console.log(rgbaStr)
     return function () {
       var gradient = this.ctx.createLinearGradient(0, 0, this.width, 0);
       gradient.addColorStop(0, rgbaStr);
@@ -219,7 +197,7 @@ class Room extends React.Component {
     }
   }
 
-  addWaves(winner) {
+  addWave(winner) {
       let newWave = {
         type: ['Sine', 'Square', 'Sawtooth', 'Triangle'][Math.floor(Math.random() * 4) + 1],
         timeModifier: .1 + (Math.random() * .1),
@@ -253,6 +231,24 @@ class Room extends React.Component {
       wavesCanvasP2.width(widthP2);
   }
 
+  animateWaves(score) {
+    const clampScore = Math.min(Math.max(score, -10), 10);
+    const { canvasWidth, canvasUnit, canvasRight } = this;
+    
+    const wavesWidth1 = canvasWidth + (canvasUnit * clampScore);
+    const wavesWidth2 = canvasWidth - (canvasUnit * clampScore);
+    const wavesRight2 = canvasRight - (canvasUnit * clampScore);
+    
+    $("#waves-canvas-P1").animate({
+      width: wavesWidth1,
+    }, 3000, function () {
+    });
+    $("#waves-canvas-P2").animate({
+      width: wavesWidth2,
+      right: wavesRight2,
+    }, 3000, function () {
+    });
+  }
 
   render() {
     const { room, player } = this.props;
