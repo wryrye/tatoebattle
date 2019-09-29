@@ -60,7 +60,7 @@ module.exports = function (io, socket, company) {
         const roundInfo = roomInfo.round;
 
         let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess)
-        roundInfo.score += points;
+        roundInfo.score += points + 1;
 
         let score = roomInfo.score + roundInfo.score;
 

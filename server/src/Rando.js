@@ -58,6 +58,7 @@ module.exports = function (io, socket) {
         // first gets prelim results
         if (isFirst) {
             roundInfo.first = player
+            roundInfo.score += isP1 ? 1 : -1;
             const score = roomInfo.score + roundInfo.score;
             socket.emit('prelim', { answer: htmlAnswer, score });
         } else {
