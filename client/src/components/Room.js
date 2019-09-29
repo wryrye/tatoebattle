@@ -26,6 +26,8 @@ class Room extends React.Component {
     this.canvasRight = null;
     this.canvasWidth = null;
     this.canvasUnit = null;
+
+    this.circleRef = React.createRef();
   }
 
   componentDidMount() {
@@ -138,7 +140,13 @@ class Room extends React.Component {
       enSent.css("font-weight", "bold");
       enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
 
-      setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
+      setTimeout(() => { 
+        document.getElementById(`avatar-P${winner}`).style.zIndex = 1;
+        this.circleRef.current.parentElement.style.zIndex = 1;
+        this.circleRef.current.classList.add('active');
+        setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
+      }, 2000);
+
     });
 
     socket.on('disconnect', () => {
@@ -161,7 +169,7 @@ class Room extends React.Component {
     const wrapper = $(`#waves-wrapper-P${player}`);
     const canvas = $(`#waves-canvas-P${player}`)
 
-    const rgbaStr = player === 1 ? 
+    const rgbaStr = player === 1 ?
       "rgba(255, 0, 0, 0.2)" :
       "rgba(23, 210, 168, 0.2)"
 
@@ -198,47 +206,47 @@ class Room extends React.Component {
   }
 
   addWave(winner) {
-      let newWave = {
-        type: ['Sine', 'Square', 'Sawtooth', 'Triangle'][Math.floor(Math.random() * 4) + 1],
-        timeModifier: .1 + (Math.random() * .1),
-        lineWidth: 1 + (Math.random() * 2),
-        amplitude: 35 + (Math.random() * 100),
-        wavelength: 100 + (Math.random() * 50)
-      };
+    let newWave = {
+      type: ['Sine', 'Square', 'Sawtooth', 'Triangle'][Math.floor(Math.random() * 4) + 1],
+      timeModifier: .1 + (Math.random() * .1),
+      lineWidth: 1 + (Math.random() * 2),
+      amplitude: 35 + (Math.random() * 100),
+      wavelength: 100 + (Math.random() * 50)
+    };
 
-      if (newWave.type === 'Sine') {
-        newWave.wavelength = 10 + (Math.random() * 20);
-      }
+    if (newWave.type === 'Sine') {
+      newWave.wavelength = 10 + (Math.random() * 20);
+    }
 
-      if (winner === 1) {
-        this[`wavesP1`].push(newWave);
-        this[`wavesP2`] =[{ ...this.baseWave }];
-      } else {
-        this[`wavesP2`].push(newWave);
-        this[`wavesP1`] =[{ ...this.baseWave }];
-      }
+    if (winner === 1) {
+      this[`wavesP1`].push(newWave);
+      this[`wavesP2`] = [{ ...this.baseWave }];
+    } else {
+      this[`wavesP2`].push(newWave);
+      this[`wavesP1`] = [{ ...this.baseWave }];
+    }
 
-      const wavesCanvasP1 = $(`#waves-canvas-P1`);
-      const wavesCanvasP2 = $(`#waves-canvas-P2`);
+    const wavesCanvasP1 = $(`#waves-canvas-P1`);
+    const wavesCanvasP2 = $(`#waves-canvas-P2`);
 
-      const widthP1 = wavesCanvasP1.width();
-      const widthP2 = wavesCanvasP2.width();
+    const widthP1 = wavesCanvasP1.width();
+    const widthP2 = wavesCanvasP2.width();
 
-      this.createWave(1);
-      this.createWave(2);
+    this.createWave(1);
+    this.createWave(2);
 
-      wavesCanvasP1.width(widthP1);
-      wavesCanvasP2.width(widthP2);
+    wavesCanvasP1.width(widthP1);
+    wavesCanvasP2.width(widthP2);
   }
 
   animateWaves(score) {
     const clampScore = Math.min(Math.max(score, -10), 10);
     const { canvasWidth, canvasUnit, canvasRight } = this;
-    
+
     const wavesWidth1 = canvasWidth + (canvasUnit * clampScore);
     const wavesWidth2 = canvasWidth - (canvasUnit * clampScore);
     const wavesRight2 = canvasRight - (canvasUnit * clampScore);
-    
+
     $("#waves-canvas-P1").animate({
       width: wavesWidth1,
     }, 3000, function () {
@@ -255,6 +263,10 @@ class Room extends React.Component {
 
     return (
       <div id="room" className="h-100 flexing">
+        <div className="circle__wrapper">
+          <p id="circle" ref={this.circleRef} href="#"/>
+        </div>
+
         <div className="d-flex justify-content-between">
           <div id="P1" className="player mx-5">P1</div>
           <h2 id="room-name" className="" >{room}</h2>
@@ -262,14 +274,14 @@ class Room extends React.Component {
         </div>
 
         <div className="row flexible">
-          <img id="avatar-P1" className="col-3 mh-100 no-padding" src="" alt="" />
+          <img id="avatar-P1" className="avatar col-3 mh-100 no-padding" src="" alt="" />
           <span id="waves-wrapper-P1" className="test mh-100 no-padding">
             <canvas id="waves-canvas-P1" className="waves"></canvas>
           </span>
           <span id="waves-wrapper-P2" className="test mh-100 no-padding">
             <canvas id="waves-canvas-P2" className="waves"></canvas>
           </span>
-          <img id="avatar-P2" className="col-3 mh-100 no-padding" src="" alt="" />
+          <img id="avatar-P2" className="avatar col-3 mh-100 no-padding" src="" alt="" />
         </div>
 
         <div id="entry" className="flexible">

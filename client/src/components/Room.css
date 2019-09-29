@@ -70,6 +70,61 @@
     width: 100%;
 }
 
+.avatar {
+    position: relative;
+}
+
+.circle__wrapper {
+    position: absolute;
+    height: 150vw;
+    width: 150vw;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#circle.active {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background-color: #fea733;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-animation: growUp 2s 5s;
+    -moz-animation: growUp 2s 5;
+    -ms-animation: growUp 2s 5;
+    -o-animation: growUp 2s 5;
+    animation: growUp 2s 5;
+    animation-iteration-count: 1;
+}
+
+
+@-webkit-keyframes growUp {   
+    0%  { -webkit-transform: scale(0); }
+    100% { -webkit-transform: scale(1); }
+  }
+  
+  @-moz-keyframes growUp {
+    0%  { -moz-transform: scale(0); }
+    100% { -moz-transform: scale(1); }
+  }
+  
+  @-o-keyframes growUp {
+    0%  { -o-transform: scale(0); }
+    100% { -o-transform: scale(1); }
+  }
+  
+  @-ms-keyframes growUp {
+    0%  { -ms-transform: scale(0); }
+    100% { -ms-transform: scale(1); }
+  }
+  
+  @keyframes growUp {
+    0%  { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
 
 /*--------------------------WAVE CSS-----------------------------------------------------------------------*/
 
@@ -95,12 +150,12 @@
 
 input::placeholder {
     font-style: italic;
-  }
+}
 
-  .no-padding {
-      padding: 0;
-  }
+.no-padding {
+    padding: 0;
+}
 
-  .test {
-      width: 25%
-  }
+.test {
+    width: 25%
+}
