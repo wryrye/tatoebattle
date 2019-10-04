@@ -5,18 +5,35 @@
 """
 
 import sys
+import os
 import csv
 
 src_dir = '../source'
 lang1 = sys.argv[1]
 lang2 = sys.argv[2]
 
-with open(f'{lang1}_sentences.csv','r') as sents1, open(f'{lang2}_sentences.csv','r') as sents2, open(f'{src_dir}/links.csv','r') as links:
+merge_file = f'{lang1}_{lang2}_translations.csv'
 
-    writer = csv.writer(open(f'{lang1}_{lang2}_translations.csv', 'w'))
+# WARNING: may cause duplicates
+last_line = None
+if os.path.exists(merge_file):
+    with open(merge_file) as f:
+        for line in f:
+            pass
+        last_line = line
+
+last_id = 0 if last_line is None else int(last_line[0:last_line.index(',')])
+print(f'Last ID: {last_id}') 
+
+writer = csv.writer(open(merge_file, 'w'))
+
+with open(f'{lang1}_sentences.csv','r') as sents1, open(f'{lang2}_sentences.csv','r') as sents2, open(f'{src_dir}/links.csv','r') as links:
 
     for row_sents1 in csv.reader(sents1):
         id_sent1 = int(row_sents1[0])
+
+        if (id_sent1 < last_id):
+            continue
 
         for row_links in csv.reader(links, delimiter='\t'):
             id_link = int(row_links[0])
