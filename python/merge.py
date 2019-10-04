@@ -47,6 +47,8 @@ with open(f'{filter_dir}/{lang2}_sentences.csv','r') as sents2:
 
 with open(f'{filter_dir}/{lang1}_sentences.csv','r') as sents1:
     writer = csv.writer(open(merge_file, 'w'))
+    
+    writer.writerow(['id_sent1','lang_sent1','val_sent1','id_sent2','lang_sent2','val_sent2'])
 
     for row_sents1 in csv.reader(sents1):
         id_sent1 = int(row_sents1[0])
