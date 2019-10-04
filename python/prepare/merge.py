@@ -25,9 +25,23 @@ if os.path.exists(merge_file):
 last_id = 0 if last_line is None else int(last_line[0:last_line.index(',')])
 print(f'Last ID: {last_id}') 
 
-writer = csv.writer(open(merge_file, 'w'))
+# TODO: store as list for multiple versions of translation
+print('Storing links in memory...')
+dict_links = {}
+with open(f'{src_dir}/links.csv','r') as links:
+    for row_links in csv.reader(links, delimiter='\t'):
+        id_link = int(row_links[0])
+        dict_links[id_link] = int(row_links[1]);
 
-with open(f'{lang1}_sentences.csv','r') as sents1, open(f'{lang2}_sentences.csv','r') as sents2, open(f'{src_dir}/links.csv','r') as links:
+print('Storing 2nd language in memory...')
+dict_sent2 = {}
+with open(f'{lang2}_sentences.csv','r') as sents2:
+    for row_sents2 in csv.reader(sents2):
+        id_sent2 = int(row_sents2[0])
+        dict_sent2[id_sent2] = row_sents2;
+
+with open(f'{lang1}_sentences.csv','r') as sents1:
+    writer = csv.writer(open(merge_file, 'w'))
 
     for row_sents1 in csv.reader(sents1):
         id_sent1 = int(row_sents1[0])
@@ -35,29 +49,10 @@ with open(f'{lang1}_sentences.csv','r') as sents1, open(f'{lang2}_sentences.csv'
         if (id_sent1 < last_id):
             continue
 
-        for row_links in csv.reader(links, delimiter='\t'):
-            id_link = int(row_links[0])
+        if id_sent1 in dict_links:
+            id_target = dict_links[id_sent1]
 
-            # gone too far (return early)
-            if  id_link > id_sent1:
-                links.seek(0)
-                break
-
-            if id_link == id_sent1:
-                id_target = int(row_links[1]);
-
-                for row_sents2 in csv.reader(sents2):
-                    id_sent2 = int(row_sents2[0])
-
-                    # gone too far (return early)
-                    if  id_sent2 > id_target:
-                        sents2.seek(0)
-                        break
-
-                    if id_sent2 == id_target:
-                        merged = row_sents1 + row_sents2
-                        print('Match found:', merged);
-                        writer.writerow(merged)
-                        sents2.seek(0)
-                        break
-
+            if id_target in dict_sent2:
+                merged = row_sents1 + dict_sent2[id_target]
+                print('Match found:', merged);
+                writer.writerow(merged)
