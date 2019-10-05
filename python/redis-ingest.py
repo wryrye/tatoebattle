@@ -25,10 +25,12 @@ for filename in os.listdir(merge_dir):
         
         pipe.lpush(base_index + index, *[row['val_sent1'],row['val_sent2']])
     
+    start = base_index
     base_index += len(pipe)
+    end = base_index
 
-    lang_range[lang] = [r.dbsize(), base_index - 1]
-
-    pipe.execute()
+    lang_range[lang] = [start, end - 1]
 
 r.set('lang_range', lang_range)
+
+pipe.execute()
