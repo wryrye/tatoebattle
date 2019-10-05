@@ -137,8 +137,8 @@ class Room extends React.Component {
       if (winner !== null) this.addWave(winner)
       this.animateWaves(score);
 
-      enSent.css("font-weight", "bold");
-      enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
+      // enSent.css("font-weight", "bold");
+      // enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
 
       setTimeout(() => { 
         document.getElementById(`avatar-P${winner}`).style.zIndex = 1;

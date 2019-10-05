@@ -124,8 +124,6 @@ class LeaderBoard extends React.Component {
             }
         ];
 
-        console.log("why hello!")
-
         // target the table element in which to add one div for each driver
         const main = d3
             .select('table')

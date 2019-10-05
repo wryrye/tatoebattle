@@ -10,10 +10,13 @@ import Lobby from './components/Lobby';
 import Room from './components/Room';
 import './App.css' 
 
+import Cookies from 'universal-cookie';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.cookies = new Cookies();
 
     this.state = {
       isReady: false
@@ -22,31 +25,20 @@ class App extends React.Component {
     this.socket = socketClient(process.env.REACT_APP_SOCKET);
 
     this.socket.on('connect', () => {
-      console.log(this.socket.id);
       this.setState({
         isReady: true
       })
     });
 
-    this.userInfo = {
-      username: null,
-      master: null,
-      room: null,
-      player: null
-    }
+    this.userInfo = this.cookies.get('userInfo');
 
     this.updateInfo = this.updateInfo.bind(this);
-
-    // if (document.cookie) {
-    //   console.log(document.cookie)
-    //   this.updateInfo(JSON.parse(document.cookie));
-    // }
   }
 
-  updateInfo(data) {
-    console.log("Updating info: " + JSON.stringify(data));
-    Object.assign(this.userInfo, data)
-    document.cookie = JSON.stringify(this.userInfo)
+  updateInfo(info) {
+    console.log("Updating info: " + info);
+    this.userInfo = {...this.userInfo, ...info}
+    this.cookies.set('userInfo', this.userInfo, { path: '/' })
   }
 
   render() {
@@ -57,7 +49,7 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/lobby/" render={(props) => <Lobby {...props} socket={this.socket} updateInfo={this.updateInfo} />} />
+          <Route path="/lobby/" render={(props) => <Lobby {...props} socket={this.socket} userInfo={this.userInfo} updateInfo={this.updateInfo} />} />
           <Route path="/room/" render={(props) => <Room {...props} socket={this.socket} {...this.userInfo} />} />
           <Redirect to="/lobby" />
         </Switch>

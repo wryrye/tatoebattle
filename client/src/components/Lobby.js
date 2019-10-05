@@ -6,6 +6,8 @@ import Login from './Login'
 import { Switch, Route, Link } from "react-router-dom";
 import About from './About'
 import LeaderBoard from "./LeaderBoard";
+import Cookies from 'universal-cookie';
+
 
 
 class Lobby extends React.Component {
@@ -14,19 +16,25 @@ class Lobby extends React.Component {
   // }
 
   componentDidMount() {
-    const { socket, updateInfo, history } = this.props;
+    const { socket, userInfo, updateInfo, history } = this.props;
 
-    let registered = document.cookie !== ''
+    console.log(userInfo);
+
+    let registered = userInfo !== undefined;
+
     if (!registered) {
       $('#login').modal('show');
-    } else {
-      updateInfo(JSON.parse(document.cookie))
     }
 
     socket.removeAllListeners();
 
     $('.battle').click(function () {
-      socket.emit('request-join', $(this).attr('id'));
+      console.log("here")
+      if (!registered) {
+        $('#login').modal('show');
+      } else {
+        socket.emit('request-join', $(this).attr('id'));
+      }
     });
 
     socket.on('accept-join', (data) => {
