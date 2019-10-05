@@ -8,12 +8,27 @@ r = redis.from_url(os.environ.get("REDIS_URL"))
 
 r.flushall()
 
-pipe = r.pipeline()
+lang_range = {}
+base_index = 0
 
 for filename in os.listdir(merge_dir):
-    df = pd.read_csv(filename, names = ['id_sent1','lang_sent1','val_sent1','id_sent2','lang_sent2','val_sent2'])
+    pipe = r.pipeline()
 
-    for index, row in df.iloc[1:].iterrows():
-        pipe.lpush(index, *[row['val_sent1'],row['val_sent2']])
+    df = pd.read_csv(os.path.join(merge_dir, filename),
+    dtype={'id_sent1':int,'lang_sent1':str,'val_sent1':str,'id_sent2':int,'lang_sent2':str,'val_sent2':str})
 
-pipe.execute()
+    lang = None
+
+    for index, row in df.iloc[0:].iterrows():
+        if lang == None:
+            lang = row['lang_sent1']
+        
+        pipe.lpush(base_index + index, *[row['val_sent1'],row['val_sent2']])
+    
+    base_index += len(pipe)
+
+    lang_range[lang] = [r.dbsize(), base_index - 1]
+
+    pipe.execute()
+
+r.set('lang_range', lang_range)
