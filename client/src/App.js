@@ -19,7 +19,8 @@ class App extends React.Component {
     this.cookies = new Cookies();
 
     this.state = {
-      isReady: false
+      isReady: false,
+      userInfo: this.cookies.get('userInfo')
     }
 
     this.socket = socketClient(process.env.REACT_APP_SOCKET);
@@ -30,15 +31,14 @@ class App extends React.Component {
       })
     });
 
-    this.userInfo = this.cookies.get('userInfo');
-
     this.updateInfo = this.updateInfo.bind(this);
   }
 
   updateInfo(info) {
-    console.log("Updating info: " + info);
-    this.userInfo = {...this.userInfo, ...info}
-    this.cookies.set('userInfo', this.userInfo, { path: '/' })
+    console.log("Updating info: " + JSON.stringify(info));
+    const userInfo = {...this.state.userInfo, ...info}
+    this.cookies.set('userInfo', userInfo, { path: '/' })
+    this.setState({userInfo})
   }
 
   render() {
@@ -49,8 +49,8 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/lobby/" render={(props) => <Lobby {...props} socket={this.socket} userInfo={this.userInfo} updateInfo={this.updateInfo} />} />
-          <Route path="/room/" render={(props) => <Room {...props} socket={this.socket} {...this.userInfo} />} />
+          <Route path="/lobby/" render={(props) => <Lobby {...props} socket={this.socket} userInfo={this.state.userInfo} updateInfo={this.updateInfo} />} />
+          <Route path="/room/" render={(props) => <Room {...props} socket={this.socket} {...this.state.userInfo} />} />
           <Redirect to="/lobby" />
         </Switch>
       </Router>

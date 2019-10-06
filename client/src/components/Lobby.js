@@ -6,41 +6,41 @@ import Login from './Login'
 import { Switch, Route, Link } from "react-router-dom";
 import About from './About'
 import LeaderBoard from "./LeaderBoard";
-import Cookies from 'universal-cookie';
-
-
 
 class Lobby extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+
+    // this.state = {
+    //   userInfo: undefined
+    // }
+
+    this.handlePlay = this.handlePlay.bind(this);
+  }
 
   componentDidMount() {
     const { socket, userInfo, updateInfo, history } = this.props;
 
-    console.log(userInfo);
-
-    let registered = userInfo !== undefined;
-
-    if (!registered) {
+    if (userInfo === undefined) {
       $('#login').modal('show');
     }
 
     socket.removeAllListeners();
 
-    $('.battle').click(function () {
-      console.log("here")
-      if (!registered) {
-        $('#login').modal('show');
-      } else {
-        socket.emit('request-join', $(this).attr('id'));
-      }
-    });
-
     socket.on('accept-join', (data) => {
       updateInfo(data);
       history.push(`/room/${data.room}/${data.player}`)
     });
+  }
+
+  handlePlay(e) {
+    const { socket, userInfo } = this.props;
+
+    if (userInfo === undefined) {
+      $('#login').modal('show');
+    } else {
+      socket.emit('request-join', e.target.id);
+    }    
   }
 
   render() {
@@ -87,7 +87,7 @@ class Lobby extends React.Component {
                             <h3 className="card-title">Random</h3>
                             <p className="card-text">Play against some rando</p>
                           </div>
-                          <button id="rando" className="battle btn btn-primary hidden big-text">PLAY</button>
+                          <button id="rando" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                         </div>
                       </div>
                     </div>
@@ -101,7 +101,7 @@ class Lobby extends React.Component {
                             <h3 className="card-title">Google</h3>
                             <p className="card-text">Play against Google</p>
                           </div>
-                          <button id="google" className="battle btn btn-primary hidden big-text">PLAY</button>
+                          <button id="google" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                         </div>
                       </div>
                     </div>
@@ -115,7 +115,7 @@ class Lobby extends React.Component {
                             <h3 className="card-title">Baidu</h3>
                             <p className="card-text">Play against Baidu</p>
                           </div>
-                          <button id="baidu" className="battle btn btn-primary hidden big-text">PLAY</button>
+                          <button id="baidu" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                         </div>
                       </div>
                     </div>
