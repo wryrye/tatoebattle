@@ -113,14 +113,17 @@ class Room extends React.Component {
 
     socket.on('final', (data) => {
       const { answer, winner, score } = data;
+      console.log(data)
+
 
       if (!isFirst) {
+        console.log("here")
         this.setState({ answerText: answer })
 
         zhSent.parent().textfill({ maxFontPixels: 100 }); //fix  
-
-        isFirst = null;
       }
+
+      isFirst = null;
 
       if (winner !== null) this.addWave(winner)
       this.animateWaves(score);
@@ -140,8 +143,6 @@ class Room extends React.Component {
         this.setState({ answerText: answer })
 
         zhSent.parent().textfill({ maxFontPixels: 100 });
-
-        isFirst = null;
       }
 
       if (winner !== null) this.addWave(winner)

@@ -5,7 +5,7 @@ const cyan = "\x1b[36m";
 
 const Game = require('./Game.js');
 
-module.exports = function (io, socket) {
+module.exports = function (io, socket, lang) {
 
     (() => {
         for (let [room, info] of Object.entries(Game.roomMap)) {
@@ -13,6 +13,7 @@ module.exports = function (io, socket) {
                 socket.join(room);
                 console.log(green, `Client ${socket.id} has joined ${room}`)
                 socket.emit('accept-join', { room: room, player: ++info.occupancy });
+                info.lang = lang;
                 return;
             }
         }
@@ -52,7 +53,7 @@ module.exports = function (io, socket) {
         const isFirst = roundInfo.first === null;
         const isP1 = player === 1;
 
-        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess)
+        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess, roomInfo.lang)
         roundInfo.score += isP1 ? points : -points;
 
         // first gets prelim results

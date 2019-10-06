@@ -5,6 +5,7 @@ class Room {
     constructor() {
         this.occupancy = 0;
         this.players = [];
+        this.lang = null
         this.score = 0;
 
         this.round = {
@@ -57,29 +58,52 @@ function nextRound(io, room) {
     console.log(Colors.magenta, "Next round...");
     roomMap[room].round.submissions = 0;
 
-    Redis.getTrans().then(trans => {
+    Redis.getTrans(roomMap[room].lang).then(trans => {
         roomMap[room].round.answer = trans.zhSent;
         roomMap[room].round.question = trans.enSent;
         io.to(room).emit('next-round', { question: trans.enSent });
     })
 }
 
-function testGuess(answer, guess) {
+function testGuess(answer, guess, lang) {
     const punctuation = "“”！。？，\\\"";
 
     let htmlAnswer = '';
     let points = 0;
 
-    for (let i of answer) {
-        // incorrect or punctuation
-        if (guess.indexOf(i) == -1 || punctuation.indexOf(i) > -1) {
-            htmlAnswer += colorChar('000000', i) //black
-            continue;
+    switch (lang) {
+        case 'cmn': {
+            for (let char of answer) {
+                // incorrect or punctuation
+                if (guess.indexOf(char) == -1 || punctuation.indexOf(char) > -1) {
+                    htmlAnswer += colorChar('000000', char) //black
+                    continue;
+                }
+                // correct
+                htmlAnswer += colorChar('7cfc00', char); //green
+                guess = guess.replace(char, '');
+                points++;
+            }
         }
-        // correct
-        htmlAnswer += colorChar('7cfc00', i); //green
-        guess = guess.replace(i, '');
-        points++;
+        case 'spa': {
+            guess = guess.split(/([-,.\s])/);
+            answer = answer.split(/([-,.\s])/);
+            htmlAnswer = []
+
+            answer.forEach((word, index) => {
+                // incorrect
+                if (guess.indexOf(word) == -1) {
+                    htmlAnswer.push(colorChar('000000', word)); //black
+                    return;
+                }
+                // correct
+                htmlAnswer.push(colorChar('7cfc00', word)); //green
+                guess.splice(index,1)
+                points++;
+            });
+
+            htmlAnswer = htmlAnswer.join(' ');
+        }
     }
 
     return { htmlAnswer, points }

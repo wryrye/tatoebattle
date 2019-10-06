@@ -11,8 +11,9 @@ r.flushall()
 lang_range = {}
 base_index = 0
 
+pipe = r.pipeline()
+
 for filename in os.listdir(merge_dir):
-    pipe = r.pipeline()
 
     df = pd.read_csv(os.path.join(merge_dir, filename),
     dtype={'id_sent1':int,'lang_sent1':str,'val_sent1':str,'id_sent2':int,'lang_sent2':str,'val_sent2':str})
@@ -26,7 +27,7 @@ for filename in os.listdir(merge_dir):
         pipe.lpush(base_index + index, *[row['val_sent1'],row['val_sent2']])
     
     start = base_index
-    base_index += len(pipe)
+    base_index = len(pipe)
     end = base_index
 
     lang_range[lang] = [start, end - 1]
