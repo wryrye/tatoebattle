@@ -148,6 +148,7 @@ img {
 #nav-brand {
     font-size: 24px;
     margin: 0 5px;
+    vertical-align: middle
 }
 
 .bg-gray {
