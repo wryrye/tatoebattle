@@ -10,11 +10,7 @@ import LeaderBoard from "./LeaderBoard";
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
-
-    // this.state = {
-    //   userInfo: undefined
-    // }
-
+    
     this.handlePlay = this.handlePlay.bind(this);
   }
 
