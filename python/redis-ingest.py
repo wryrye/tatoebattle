@@ -21,6 +21,9 @@ for filename in os.listdir(merge_dir):
     lang = None
 
     for index, row in df.iloc[0:].iterrows():
+        if os.environ.get('ECOSYSTEM') == 'HEROKU' and index > 50000:
+            break
+
         if lang == None:
             lang = row['lang_sent1']
         
