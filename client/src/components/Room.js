@@ -91,7 +91,7 @@ class Room extends React.Component {
 
       this.setState({
         questionText: question,
-        questionClass:'',
+        questionClass: '',
         answerText: '',
         buttonDisabled: false
       });
@@ -191,7 +191,7 @@ class Room extends React.Component {
   }
 
   createWave(player, init) {
-    const canvas =  this[`canvasP${player}Ref`].current;
+    const canvas = this[`canvasP${player}Ref`].current;
     const wrapper = this[`wrapperP${player}Ref`].current;
 
     const rgbaStr = player === 1 ?
@@ -300,19 +300,24 @@ class Room extends React.Component {
         </div>
 
         <div className="row flexible">
-          <img id="avatar-P1" className="avatar col-3 mh-100 no-padding" style={avatarP1Style} src={avatarP1Src} alt="" />
+          <span className="avatar-wrapper col-3 mh-100 no-padding" style={avatarP1Style}>
+            <img id="avatar-P1" className="avatar" src={avatarP1Src} alt="" />
+          </span>
+
           <span id="waves-wrapper-P1" className="test mh-100 no-padding" ref={this.wrapperP1Ref}>
             <canvas id="waves-canvas-P1" className="waves" ref={this.canvasP1Ref}></canvas>
           </span>
           <span id="waves-wrapper-P2" className="test mh-100 no-padding" ref={this.wrapperP2Ref}>
             <canvas id="waves-canvas-P2" className="waves" ref={this.canvasP2Ref}></canvas>
           </span>
-          <img id="avatar-P2" className="avatar col-3 mh-100 no-padding" style={avatarP2Style} src={avatarP2Src} alt="" />
+          <span className="avatar-wrapper col-3 mh-100 no-padding" style={avatarP2Style}>
+            <img id="avatar-P2" className="avatar" src={avatarP2Src} alt="" />
+          </span>
         </div>
 
         <div id="entry" className="flexible">
           <div className="textfill"><span id="eng-sent" className={questionClass}>{questionText}</span></div>
-          <div className="textfill"><span id="chin-sent" dangerouslySetInnerHTML={{__html: answerText}} ></span></div>
+          <div className="textfill"><span id="chin-sent" dangerouslySetInnerHTML={{ __html: answerText }} ></span></div>
           <div className="input-group p-3">
             <input id="text-input" name="searchtext" className="form-control" type="text" placeholder="Enter translation..." onKeyUp={this.handleKeyUp} />
             <span className="input-group-btn">
