@@ -27,7 +27,26 @@ class Room extends React.Component {
     this.canvasWidth = null;
     this.canvasUnit = null;
 
-    this.circleRef = React.createRef();
+    this.wrapperP1Ref = React.createRef();
+    this.canvasP1Ref = React.createRef();
+    this.wrapperP2Ref = React.createRef();
+    this.canvasP2Ref = React.createRef();
+
+    this.state = {
+      questionText: 'Waiting for opponent',
+      questionClass: 'loading',
+      answerText: '',
+      buttonDisabled: true,
+      avatarP1Src: '',
+      avatarP2Src: '',
+      avatarP1Style: null,
+      avatarP2Style: null,
+      wrapperStyle: null,
+      circleClass: null,
+    }
+
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -40,26 +59,14 @@ class Room extends React.Component {
       console.log(this.props);
     }
 
-    $("#text-input").keyup(function (event) {
-      if (event.keyCode === 13) {
-        $('#submit-guess').click()
-      }
-    });
+    var zhSent = $('#chin-sent'); // fix
+    var enSent = $('#eng-sent'); // fix
 
-    var zhSent = $('#chin-sent');
-    var enSent = $('#eng-sent');
+    enSent.parent().textfill({ maxFontPixels: 100 }); // fix
 
-    enSent.html("等待对手");
-    enSent.addClass("loading");
-    enSent.parent().textfill({ maxFontPixels: 100 });
+    const opponent = player === 1 ? 2 : 1;
 
-    $('#submit-guess').prop("disabled", true);
-
-    var me = player === 1 ? 1 : 2;
-    var opp = player === 1 ? 2 : 1;
-
-    $('#avatar-P' + me).attr('src', `/assets/images/${master}.png`);
-
+    this.setState({ [`avatarP${player}Src`]: `/assets/images/${master}.png` })
 
     var data = {
       'room': room,
@@ -69,32 +76,27 @@ class Room extends React.Component {
         'player': player,
       }
     }
-    socket.emit('ready-start', data);
 
-    /** submits guess  **/
-    $('#submit-guess').click(function () {
-      $(this).prop("disabled", true);
-      socket.emit('submit-guess', { room, player, guess: $("#text-input").val() });
-      $("#text-input").val('');
-    });
+    socket.emit('ready-start', data);
 
     /** listens for results **/
     var isFirst = null;
 
     socket.on('start-game', (data) => {
-      $('#avatar-P' + opp).attr("src", `/assets/images/${data.players[parseInt(opp) - 1].master}.png`);
+      this.setState({ [`avatarP${opponent}Src`]: `/assets/images/${data.players[opponent - 1].master}.png` })
     });
 
     socket.on('next-round', (data) => {
       const { question } = data;
 
-      enSent.removeClass("loading");
-      enSent.html(question);
-      enSent.parent().textfill({ maxFontPixels: 100 });
+      this.setState({
+        questionText: question,
+        questionClass:'',
+        answerText: '',
+        buttonDisabled: false
+      });
 
-      zhSent.empty();
-
-      $('#submit-guess').prop("disabled", false);
+      enSent.parent().textfill({ maxFontPixels: 100 }); //fix
     });
 
     socket.on('prelim', (data) => {
@@ -102,8 +104,9 @@ class Room extends React.Component {
 
       isFirst = true;
 
-      zhSent.html(answer);
-      zhSent.parent().textfill({ maxFontPixels: 100 });
+      this.setState({ answerText: answer })
+
+      zhSent.parent().textfill({ maxFontPixels: 100 }); //fix
 
       this.animateWaves(score);
     });
@@ -112,16 +115,20 @@ class Room extends React.Component {
       const { answer, winner, score } = data;
 
       if (!isFirst) {
-        zhSent.html(answer);
-        zhSent.parent().textfill({ maxFontPixels: 100 });
+        this.setState({ answerText: answer })
+
+        zhSent.parent().textfill({ maxFontPixels: 100 }); //fix  
+
         isFirst = null;
       }
 
       if (winner !== null) this.addWave(winner)
       this.animateWaves(score);
 
-      enSent.html("Next round");
-      enSent.addClass("loading");
+      this.setState({
+        questionText: 'Next round',
+        questionClass: 'loading'
+      })
 
       setTimeout(function () { socket.emit('ready-next', room); }, 4000); //ready for next round
     });
@@ -130,29 +137,33 @@ class Room extends React.Component {
       const { answer, winner, score } = data;
 
       if (!isFirst) {
-        zhSent.html(answer);
+        this.setState({ answerText: answer })
+
         zhSent.parent().textfill({ maxFontPixels: 100 });
+
+        isFirst = null;
       }
 
       if (winner !== null) this.addWave(winner)
       this.animateWaves(score);
 
-      // enSent.css("font-weight", "bold");
-      // enSent.html(player === winner ? 'VICTORY' : "DEFEAT");
+      setTimeout(() => {
+        this.setState({
+          [`avatarP${winner}Style`]: { zIndex: 1 },
+          wrapperStyle: { zIndex: 1 },
+          circleClass: 'active'
+        })
 
-      setTimeout(() => { 
-        document.getElementById(`avatar-P${winner}`).style.zIndex = 1;
-        this.circleRef.current.parentElement.style.zIndex = 1;
-        this.circleRef.current.classList.add('active');
         setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
       }, 2000);
 
     });
 
     socket.on('disconnect', () => {
-      enSent.html("Opponent disconnected...");
-      enSent.css("color", "red");
-      enSent.css("font-weight", "bold");
+      this.setState({
+        questionText: 'Opponent disconnected',
+        questionClass: 'disconnect'
+      })
 
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
     });
@@ -165,19 +176,33 @@ class Room extends React.Component {
     this.canvasUnit = this.canvasWidth / 10;
   }
 
+  handleKeyUp(e) {
+    if (e.keyCode === 13) {
+      this.handleSubmit();
+    }
+  }
+
+  handleSubmit() {
+    const { socket, room, player } = this.props;
+
+    this.setState({ buttonDisabled: true })
+    socket.emit('submit-guess', { room, player, guess: $("#text-input").val() });
+    $("#text-input").val('');
+  }
+
   createWave(player, init) {
-    const wrapper = $(`#waves-wrapper-P${player}`);
-    const canvas = $(`#waves-canvas-P${player}`)
+    const canvas =  this[`canvasP${player}Ref`].current;
+    const wrapper = this[`wrapperP${player}Ref`].current;
 
     const rgbaStr = player === 1 ?
       "rgba(255, 0, 0, 0.2)" :
       "rgba(23, 210, 168, 0.2)"
 
     new SineWaves({
-      el: canvas[0],
+      el: canvas,
       speed: 30,
-      width: () => { return wrapper.width(); },
-      height: () => { return wrapper.height(); },
+      width: () => { return wrapper.offsetWidth; },
+      height: () => { return wrapper.offsetHeight; },
       ease: 'SineInOut',
       wavesWidth: '100%',
       waves: this[`wavesP${player}`],
@@ -259,12 +284,13 @@ class Room extends React.Component {
   }
 
   render() {
-    const { room, player } = this.props;
+    const { room } = this.props;
+    const { wrapperStyle, circleClass, avatarP1Src, avatarP2Src, avatarP1Style, avatarP2Style, questionText, questionClass, answerText, buttonDisabled } = this.state
 
     return (
       <div id="room" className="h-100 flexing">
-        <div className="circle__wrapper">
-          <p id="circle" ref={this.circleRef} href="#"/>
+        <div className="circle_wrapper" style={wrapperStyle}>
+          <p id="circle" href="#" className={circleClass} />
         </div>
 
         <div className="d-flex justify-content-between">
@@ -274,23 +300,23 @@ class Room extends React.Component {
         </div>
 
         <div className="row flexible">
-          <img id="avatar-P1" className="avatar col-3 mh-100 no-padding" src="" alt="" />
-          <span id="waves-wrapper-P1" className="test mh-100 no-padding">
-            <canvas id="waves-canvas-P1" className="waves"></canvas>
+          <img id="avatar-P1" className="avatar col-3 mh-100 no-padding" style={avatarP1Style} src={avatarP1Src} alt="" />
+          <span id="waves-wrapper-P1" className="test mh-100 no-padding" ref={this.wrapperP1Ref}>
+            <canvas id="waves-canvas-P1" className="waves" ref={this.canvasP1Ref}></canvas>
           </span>
-          <span id="waves-wrapper-P2" className="test mh-100 no-padding">
-            <canvas id="waves-canvas-P2" className="waves"></canvas>
+          <span id="waves-wrapper-P2" className="test mh-100 no-padding" ref={this.wrapperP2Ref}>
+            <canvas id="waves-canvas-P2" className="waves" ref={this.canvasP2Ref}></canvas>
           </span>
-          <img id="avatar-P2" className="avatar col-3 mh-100 no-padding" src="" alt="" />
+          <img id="avatar-P2" className="avatar col-3 mh-100 no-padding" style={avatarP2Style} src={avatarP2Src} alt="" />
         </div>
 
         <div id="entry" className="flexible">
-          <div className="textfill"><span id="eng-sent"></span></div>
-          <div className="textfill"><span id="chin-sent"></span></div>
+          <div className="textfill"><span id="eng-sent" className={questionClass}>{questionText}</span></div>
+          <div className="textfill"><span id="chin-sent" dangerouslySetInnerHTML={{__html: answerText}} ></span></div>
           <div className="input-group p-3">
-            <input id="text-input" name="searchtext" className="form-control" type="text" placeholder="Enter translation..." />
+            <input id="text-input" name="searchtext" className="form-control" type="text" placeholder="Enter translation..." onKeyUp={this.handleKeyUp} />
             <span className="input-group-btn">
-              <button className="btn btn-default form-control" type="submit" id="submit-guess">&#8620;</button>
+              <button className="btn btn-default form-control" type="submit" id="submit-guess" onClick={this.handleSubmit} disabled={buttonDisabled}>&#8620;</button>
             </span>
           </div>
         </div>

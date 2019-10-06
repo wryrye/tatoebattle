@@ -20,6 +20,11 @@
     position: absolute;
 }
 
+.disconnect {
+    color: red;
+    font-weight: bold;
+}
+
 #room-name {
     position: relative;
     font-size: 6em;
@@ -74,7 +79,7 @@
     position: relative;
 }
 
-.circle__wrapper {
+.circle_wrapper {
     position: absolute;
     height: 150vw;
     width: 150vw;
@@ -85,6 +90,7 @@
 }
 
 #circle.active {
+    z-index: 1;
     display: block;
     height: 100%;
     width: 100%;
