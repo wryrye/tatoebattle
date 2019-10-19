@@ -90,9 +90,10 @@ function testGuess(answer, guess, lang) {
             answer = answer.split(/([-,.\s])/);
             htmlAnswer = []
 
-            answer.forEach((word, index) => {
+            answer.forEach(word => {
                 // incorrect
-                if (guess.indexOf(word) == -1) {
+                const index = guess.indexOf(word)
+                if (index == -1) {
                     htmlAnswer.push(colorChar('000000', word)); //black
                     return;
                 }
