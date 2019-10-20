@@ -47,13 +47,19 @@
     text-shadow: 5px 5px 5px blue;
 }
 
+/* #battlefield {
+    height: 50%;
+    max-height: 50%
+} */
+
 #entry {
     position: relative;
     display: flex;
     flex-direction: column;
     bottom: 0px;
     width: 100%;
-    max-height: 35%;
+    height: 20em;
+    max-height: 20em;
 }
 
 .textfill {
@@ -61,6 +67,12 @@
     height: 50%;
     width: 100%;
     overflow: hidden;
+    color: white;
+    text-shadow: 
+        -1px 0 black, 
+        0 1px black, 
+        1px 0 black,
+        0 -1px black;
 }
 
 #eng-sent {
@@ -75,12 +87,23 @@
     width: 100%;
 }
 
-.avatar-wrapper {
+/* .avatar-wrapper {
     overflow: hidden;
-}
+} */
 
 .avatar {
-    width: 100%;
+    position: absolute;
+    width: 100%
+    /* width: 150%;
+    left: -15%; */
+}
+
+#avatar-P1 {
+    left: 0;
+}
+
+#avatar-P2 {
+    right: 0;
 }
 
 .circle_wrapper {

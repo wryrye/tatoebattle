@@ -169,8 +169,8 @@ class Room extends React.Component {
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
     });
 
-    this.createWave(1, true);
-    this.createWave(2, true);
+    // this.createWave(1, true);
+    // this.createWave(2, true);
 
     this.canvasRight = parseFloat($('#waves-canvas-P2').css("right"));
     this.canvasWidth = parseFloat($('#waves-canvas-P1').css("width"));
@@ -300,7 +300,7 @@ class Room extends React.Component {
           <div id="P2" className="player mx-5">P2</div>
         </div>
 
-        <div className="row flexible">
+        <div id="battlefield" className="row flexible">
           <span className="avatar-wrapper col-3 mh-100 no-padding" style={avatarP1Style}>
             <img id="avatar-P1" className="avatar" src={avatarP1Src} alt="" />
           </span>
