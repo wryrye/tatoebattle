@@ -74,16 +74,22 @@ function testGuess(answer, guess, lang) {
     switch (lang) {
         case 'cmn': {
             for (let char of answer) {
-                // incorrect or punctuation
+                // punctuation
+                if (punctuation.indexOf(char) > -1) {
+                    htmlAnswer += colorChar('000000', char) // black
+                    continue;
+                }
+                // incorrect 
                 if (guess.indexOf(char) == -1 || punctuation.indexOf(char) > -1) {
-                    htmlAnswer += colorChar('000000', char) //black
+                    htmlAnswer += colorChar('ff0000', char) // red
                     continue;
                 }
                 // correct
-                htmlAnswer += colorChar('7cfc00', char); //green
+                htmlAnswer += colorChar('7cfc00', char); // green
                 guess = guess.replace(char, '');
                 points++;
             }
+            break;
         }
         case 'spa': {
             guess = guess.split(/([-,.\s])/);
@@ -94,20 +100,25 @@ function testGuess(answer, guess, lang) {
             console.log("answer: " + answer)
 
             answer.forEach(word => {
-                const index = guess.indexOf(word)
-
+                const index = guess.indexOf(word);
+                // punctuation
+                if (punctuation.indexOf(word) > -1) {
+                    htmlAnswer += colorChar('000000', word) // black
+                    return;
+                }
                 // incorrect
                 if (index == -1 || punctuation.indexOf(word) > -1) {
-                    htmlAnswer.push(colorChar('000000', word)); //black
+                    htmlAnswer.push(colorChar('ff0000', word)); // red
                     return;
                 }
                 // correct
-                htmlAnswer.push(colorChar('7cfc00', word)); //green
+                htmlAnswer.push(colorChar('7cfc00', word)); // green
                 guess.splice(index,1)
                 points++;
             });
 
             htmlAnswer = htmlAnswer.join('');
+            break;
         }
     }
 
