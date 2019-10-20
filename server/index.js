@@ -30,7 +30,7 @@ var companyMode = require('./src/Company.js');
 io.on('connection', function (socket) {
   socket.on('request-join', (mode, lang) => {
 
-    lang = 'spa' // hardcoded
+    // lang = 'spa' // hardcoded
 
     switch (mode) {
       case 'rando':

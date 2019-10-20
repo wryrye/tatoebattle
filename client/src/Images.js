@@ -1,11 +1,11 @@
 const images = [
-    { id: 0, title: 'aang', description: 'aang', src: '/assets/images/aang.png' },
-    { id: 1, title: 'azula', description: 'azula', src: '/assets/images/azula.png' },
-    { id: 2, title: 'jackiechan', description: 'jackiechan', src: '/assets/images/jackiechan.png' },
-    { id: 3, title: 'mulan', description: 'mulan', src: '/assets/images/mulan.png' },
-    { id: 4, title: 'brucelee', description: 'brucelee', src: '/assets/images/brucelee.png' },
-    { id: 5, title: 'xijinping', description: 'xijinping', src: '/assets/images/xijinping.png' },
-    { id: 6, title: 'tsaiingwen', description: 'tsaiingwen', src: '/assets/images/tsaiingwen.png' },
+    { id: 'aang', description: 'The Last Airbender', src: '/assets/images/aang.png' },
+    { id: 'azula', description: 'Princess of the Fire Nation', src: '/assets/images/azula.png' },
+    { id: 'jackiechan', description: 'Rush Hour Male Lead', src: '/assets/images/jackiechan.png' },
+    { id: 'mulan', description: 'Legendary Female Warrior', src: '/assets/images/mulan.png' },
+    { id: 'brucelee', description: 'Founder of Jeet Kune Do', src: '/assets/images/brucelee.png' },
+    { id: 'xijinping', description: 'Glorious Despot of China', src: '/assets/images/xijinping.png' },
+    { id: 'tsaiingwen', description: 'President of Taiwan', src: '/assets/images/tsaiingwen.png' },
 ];
 
 export default images;

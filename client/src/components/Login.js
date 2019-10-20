@@ -10,33 +10,44 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      selected: null
+      username: '',
+      language: null,
+      avatar: null,
+      inputClass: null,
+      imagesClass: null
     };
 
-    this.inputRef = React.createRef();
-    this.imagesRef = React.createRef();
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
-  handleSelect(id) {
-    this.setState({
-      selected: id
-    });
+  handleSelect(e) {
+    switch (e.target.tagName) {
+      case 'INPUT':
+        this.setState({ username: e.target.value });
+        break
+      case 'SELECT': 
+        this.setState({ language: e.target.value });
+        break;
+      case 'IMG': 
+        this.setState({ avatar: e.target.id });
+        break;
+    }
   }
 
   handleSave() {
     const { updateInfo } = this.props;
-    const input = this.inputRef.current;
-    const images = this.imagesRef.current;
+    const { username, language, avatar} = this.state;
 
-
-    if (input.value === "") {
-      input.className = 'mandatory';
-    } else if (this.state.selected === null) {
-      images.className = 'mandatory';
+    if (username === '') {
+      this.setState({ inputClass: 'mandatory' });
+    } else if (avatar === null) {
+      this.setState({ imagesClass: 'mandatory' });
     } else {
       updateInfo({
-        username: input.value,
-        master: images.children.item(this.state.selected).title
+        username: username,
+        language: language,
+        master: avatar,
       })
       $('#login').modal('hide');
     }
@@ -48,26 +59,33 @@ class Login extends React.Component {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLongTitle">Login</h5>
+              <h3 className="modal-title" id="exampleModalLongTitle">Register</h3>
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div className="modal-body">
-              <div>Username：<input ref={this.inputRef} autoComplete="off" /></div>
-              <div>Choose Master：</div>
-              <div ref={this.imagesRef} className="row">
+              <div>Choose username:&nbsp;<input autoComplete="off" onChange={this.handleSelect} className={this.state.inputClass}/></div><br/>
+              <div>Select language to practice:&nbsp;
+                <select defaultValue="default" onChange={this.handleSelect}>
+                  <option value="default" disabled >Language</option>
+                  <option value="cmn">Chinese</option>
+                  <option value="spa">Spanish</option>
+                </select>
+              </div><br/>
+              <div>Pick avatar:&nbsp;</div>
+              <div className="row" className={this.state.imagesClass}>
                 {
-                  images.map(({ id, src, title, description }) =>
-                    <span key={id} title={title} className={'col-3 icon' + (this.state.selected === id ? " selected" : "")}>
-                      <img src={src} alt={description} className='master' onClick={() => this.handleSelect(id)} />
+                  images.map(({ id, description, src }) =>
+                    <span key={id} className={'col-3 icon' + (this.state.avatar === id ? " selected" : "")}>
+                      <img id={id} src={src} title={description} alt={description} className='master' onClick={this.handleSelect} />
                     </span>
                   )
                 }
               </div>
             </div>
             <div className="modal-footer">
-              <button id="save" type="button" className="btn btn-primary" onClick={() => this.handleSave()} >保存</button>
+              <button id="save" type="button" className="btn btn-primary" onClick={this.handleSave} >保存</button>
             </div>
           </div>
         </div>

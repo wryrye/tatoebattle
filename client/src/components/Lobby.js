@@ -10,7 +10,7 @@ import LeaderBoard from "./LeaderBoard";
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.handlePlay = this.handlePlay.bind(this);
   }
 
@@ -35,8 +35,8 @@ class Lobby extends React.Component {
     if (userInfo === undefined) {
       $('#login').modal('show');
     } else {
-      socket.emit('request-join', e.target.id);
-    }    
+      socket.emit('request-join', e.target.id, userInfo.language);
+    }
   }
 
   render() {
@@ -63,6 +63,13 @@ class Lobby extends React.Component {
                   <Link className="nav-link" to={`${match.url}/leader-board`}>LeaderBoard</Link>
                 </li>
               </ul>
+            </div>
+            <div>
+              Learn:&nbsp;
+              <select>
+                <option value="cmn">Chinese</option>
+                <option value="spa">Spanish</option>
+              </select>
             </div>
           </div>
         </nav>
