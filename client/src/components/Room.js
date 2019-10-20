@@ -150,8 +150,8 @@ class Room extends React.Component {
 
       setTimeout(() => {
         this.setState({
-          [`avatarP${winner}Style`]: { zIndex: 1 },
-          wrapperStyle: { zIndex: 1 },
+          [`avatarP${winner}Style`]: { zIndex: 3 },
+          wrapperStyle: { zIndex: 3 },
           circleClass: 'active'
         })
 
@@ -169,8 +169,8 @@ class Room extends React.Component {
       setTimeout(function () { window.location.replace("/lobby/"); }, 6000);
     });
 
-    // this.createWave(1, true);
-    // this.createWave(2, true);
+    this.createWave(1, true);
+    this.createWave(2, true);
 
     this.canvasRight = parseFloat($('#waves-canvas-P2').css("right"));
     this.canvasWidth = parseFloat($('#waves-canvas-P1').css("width"));
@@ -203,7 +203,7 @@ class Room extends React.Component {
       el: canvas,
       speed: 30,
       width: () => { return wrapper.offsetWidth; },
-      height: () => { return wrapper.offsetHeight; },
+      height: () => { return wrapper.offsetHeight - 10; },
       ease: 'SineInOut',
       wavesWidth: '100%',
       waves: this[`wavesP${player}`],
@@ -301,17 +301,17 @@ class Room extends React.Component {
         </div>
 
         <div id="battlefield" className="row flexible">
-          <span className="avatar-wrapper col-3 mh-100 no-padding" style={avatarP1Style}>
+          <span className="avatar-wrapper col-2 mh-100 no-padding" style={avatarP1Style}>
             <img id="avatar-P1" className="avatar" src={avatarP1Src} alt="" />
           </span>
 
-          <span id="waves-wrapper-P1" className="test mh-100 no-padding" ref={this.wrapperP1Ref}>
+          <span id="waves-wrapper-P1" className="col-4 mh-100 no-padding" ref={this.wrapperP1Ref}>
             <canvas id="waves-canvas-P1" className="waves" ref={this.canvasP1Ref}></canvas>
           </span>
-          <span id="waves-wrapper-P2" className="test mh-100 no-padding" ref={this.wrapperP2Ref}>
+          <span id="waves-wrapper-P2" className="col-4 mh-100 no-padding" ref={this.wrapperP2Ref}>
             <canvas id="waves-canvas-P2" className="waves" ref={this.canvasP2Ref}></canvas>
           </span>
-          <span className="avatar-wrapper col-3 mh-100 no-padding" style={avatarP2Style}>
+          <span className="avatar-wrapper col-2 mh-100 no-padding" style={avatarP2Style}>
             <img id="avatar-P2" className="avatar" src={avatarP2Src} alt="" />
           </span>
         </div>
