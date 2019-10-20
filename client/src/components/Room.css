@@ -28,11 +28,16 @@
 #room-name {
     position: relative;
     font-size: 6em;
-    text-shadow: -8px 0 red, 0 8px yellow, 8px 0 blue, 0 -8px red;
+    text-shadow: 
+        red -10px 0 10px, 
+        yellow 0 10px 10px, 
+        blue 10px 0 10px, 
+        purple 0 -10px 10px;
     font-weight: bold;
     width: 100%;
     text-align: center;
     padding-top: 10px;
+    letter-spacing: .33em;
 }
 
 .player {
