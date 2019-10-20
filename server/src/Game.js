@@ -66,7 +66,7 @@ function nextRound(io, room) {
 }
 
 function testGuess(answer, guess, lang) {
-    const punctuation = "“”！。？，\\\"";
+    const punctuation = ",.?！ 。？，\"“”";
 
     let htmlAnswer = '';
     let points = 0;
@@ -90,10 +90,14 @@ function testGuess(answer, guess, lang) {
             answer = answer.split(/([-,.\s])/);
             htmlAnswer = []
 
+            console.log("guess: " + guess)
+            console.log("answer: " + answer)
+
             answer.forEach(word => {
-                // incorrect
                 const index = guess.indexOf(word)
-                if (index == -1) {
+
+                // incorrect
+                if (index == -1 || punctuation.indexOf(word) > -1) {
                     htmlAnswer.push(colorChar('000000', word)); //black
                     return;
                 }
@@ -103,7 +107,7 @@ function testGuess(answer, guess, lang) {
                 points++;
             });
 
-            htmlAnswer = htmlAnswer.join(' ');
+            htmlAnswer = htmlAnswer.join('');
         }
     }
 
