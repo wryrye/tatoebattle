@@ -73,14 +73,17 @@ function testGuess(answer, guess, lang) {
 
     switch (lang) {
         case 'cmn': {
+            console.log("guess: " + guess)
+            console.log("answer: " + answer)
+
             for (let char of answer) {
                 // punctuation
-                if (punctuation.indexOf(char) > -1) {
+                if (punctuation.indexOf(char) != -1) {
                     htmlAnswer += colorChar('000000', char) // black
                     continue;
                 }
                 // incorrect 
-                if (guess.indexOf(char) == -1 || punctuation.indexOf(char) > -1) {
+                if (guess.indexOf(char) == -1) {
                     htmlAnswer += colorChar('ff0000', char) // red
                     continue;
                 }
@@ -93,6 +96,8 @@ function testGuess(answer, guess, lang) {
         }
         case 'spa': {
             guess = guess.split(/([-,.\s])/);
+            guess = guess.map((x) => { return x.toLowerCase() })
+
             answer = answer.split(/([-,.\s])/);
             htmlAnswer = []
 
@@ -100,14 +105,15 @@ function testGuess(answer, guess, lang) {
             console.log("answer: " + answer)
 
             answer.forEach(word => {
-                const index = guess.indexOf(word);
+                let index = null;
+
                 // punctuation
-                if (punctuation.indexOf(word) > -1) {
-                    htmlAnswer += colorChar('000000', word) // black
+                if ((index = punctuation.indexOf(word.toLowerCase()) != -1)) {
+                    htmlAnswer.push(colorChar('000000', word)) // black
                     return;
                 }
                 // incorrect
-                if (index == -1 || punctuation.indexOf(word) > -1) {
+                if ((index = guess.indexOf(word.toLowerCase()) == -1)) {
                     htmlAnswer.push(colorChar('ff0000', word)); // red
                     return;
                 }
