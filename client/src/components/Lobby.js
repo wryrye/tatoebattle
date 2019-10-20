@@ -64,13 +64,9 @@ class Lobby extends React.Component {
                 </li>
               </ul>
             </div>
-            <div>
-              Learn:&nbsp;
-              <select>
-                <option value="cmn">Chinese</option>
-                <option value="spa">Spanish</option>
-              </select>
-            </div>
+            <ul className="navbar-nav mr-auto">
+              <li><a href="#myModal" data-toggle = "modal" data-target= "#login" className="nav-link">Profile</a></li>
+            </ul>
           </div>
         </nav>
 

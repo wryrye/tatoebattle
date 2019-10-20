@@ -35,7 +35,7 @@ class App extends React.Component {
   }
 
   updateInfo(info) {
-    console.log("Updating info: " + JSON.stringify(info));
+    // console.log("Updating info: " + JSON.stringify(info));
     const userInfo = {...this.state.userInfo, ...info}
     this.cookies.set('userInfo', userInfo, { path: '/' })
     this.setState({userInfo})

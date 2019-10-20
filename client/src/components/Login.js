@@ -11,14 +11,33 @@ class Login extends React.Component {
 
     this.state = {
       username: '',
-      language: null,
-      avatar: null,
-      inputClass: null,
-      imagesClass: null
+      language: '',
+      avatar: '',
+      inputClass: '',
+      selectClass: '',
+      imagesClass: ''
     };
 
     this.handleSelect = this.handleSelect.bind(this);
     this.handleSave = this.handleSave.bind(this);
+  }
+
+  componentDidMount() {
+    // update from props on show
+    $('#login').on('show.bs.modal', (e) => {
+      if (this.props.userInfo != undefined) {
+        this.setState({ ...this.props.userInfo })
+      }
+    });
+
+    // reset validation on close
+    $('#login').on('hidden.bs.modal', (e) => {
+      this.setState({
+        inputClass: '',
+        selectClass: '',
+        imagesClass: '',
+      })
+    });
   }
 
   handleSelect(e) {
@@ -26,22 +45,25 @@ class Login extends React.Component {
       case 'INPUT':
         this.setState({ username: e.target.value });
         break
-      case 'SELECT': 
+      case 'SELECT':
         this.setState({ language: e.target.value });
         break;
-      case 'IMG': 
+      case 'IMG':
         this.setState({ avatar: e.target.id });
         break;
+      default:
     }
   }
 
   handleSave() {
     const { updateInfo } = this.props;
-    const { username, language, avatar} = this.state;
+    const { username, language, avatar } = this.state;
 
     if (username === '') {
       this.setState({ inputClass: 'mandatory' });
-    } else if (avatar === null) {
+    } else if (language === '') {
+      this.setState({ selectClass: 'mandatory' });
+    } else if (avatar === '') {
       this.setState({ imagesClass: 'mandatory' });
     } else {
       updateInfo({
@@ -64,17 +86,17 @@ class Login extends React.Component {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body">
-              <div>Choose username:&nbsp;<input autoComplete="off" onChange={this.handleSelect} className={this.state.inputClass}/></div><br/>
-              <div>Select language to practice:&nbsp;
-                <select defaultValue="default" onChange={this.handleSelect}>
-                  <option value="default" disabled >Language</option>
+            <div className="modal-body" >
+              <div className={this.state.inputClass}>Choose username:&nbsp;<input value={this.state.username} autoComplete="off" onChange={this.handleSelect} /></div><br />
+              <div className={this.state.selectClass}>Select language to practice:&nbsp;
+                <select value={this.state.language} onChange={this.handleSelect}>
+                  <option value='' disabled >Language</option>
                   <option value="cmn">Chinese</option>
                   <option value="spa">Spanish</option>
                 </select>
-              </div><br/>
+              </div><br />
               <div>Pick avatar:&nbsp;</div>
-              <div className="row" className={this.state.imagesClass}>
+              <div className={'row ' + this.state.imagesClass}>
                 {
                   images.map(({ id, description, src }) =>
                     <span key={id} className={'col-3 icon' + (this.state.avatar === id ? " selected" : "")}>
