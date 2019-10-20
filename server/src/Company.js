@@ -5,7 +5,7 @@ const cyan = "\x1b[36m";
 
 const Game = require('./Game.js');
 
-module.exports = function (io, socket, company) {
+module.exports = function (io, socket, company, lang) {
 
     (() => {
         for (let [room, info] of Object.entries(Game.roomMap)) {
@@ -15,6 +15,7 @@ module.exports = function (io, socket, company) {
                 console.log(green, `Client ${company} has joined ${room}`)
                 socket.emit('accept-join', { room: room, player: 1 });
                 info.occupancy = 2;
+                info.lang = lang;
                 return;
             }
         }
@@ -59,7 +60,7 @@ module.exports = function (io, socket, company) {
         const roomInfo = Game.roomMap[room];
         const roundInfo = roomInfo.round;
 
-        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess)
+        let { htmlAnswer, points } = Game.testGuess(roundInfo.answer, guess, roomInfo.lang)
         roundInfo.score += points + 1;
 
         let score = roomInfo.score + roundInfo.score;
@@ -70,8 +71,8 @@ module.exports = function (io, socket, company) {
         // company guess
         const timeStart = process.hrtime()
         const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
-        const companyGuess = await companyTranslate(roundInfo.question);
-        let { points: companyPoints } = Game.testGuess(roundInfo.answer, companyGuess);
+        const companyGuess = await companyTranslate(roundInfo.question, roomInfo.lang);
+        let { points: companyPoints } = Game.testGuess(roundInfo.answer, companyGuess, roomInfo.lang);
         roundInfo.score -= companyPoints;
         const elapsedTime = process.hrtime(timeStart)[0] * 1000;
 
@@ -111,19 +112,26 @@ const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const isoCode3To1Map = {
+    eng:'en',
+    spa:'es',
+    cmn:'zh'
+}
+
 // google
 const { Translate: Google } = require('@google-cloud/translate');
 const google = new Google({ projectId: 'tatoebattle'});
 
-async function googleTranslate(text) {
-    const [translation] = await google.translate(text, 'zh');
+async function googleTranslate(text, lang3) {
+    const [translation] = await google.translate(text, isoCode3To1Map[lang3]);
     return translation;
 }
 
 // baidu
 const baidu = require("baidu-translate-api");
 
-async function baiduTranslate(text) {
-    const {trans_result:{dst: translation}} = await baidu(text, {from: 'en', to: 'zh'})
+async function baiduTranslate(text, lang3) {
+    const {trans_result:{dst: translation}} = await baidu(text, {from: 'en', to: isoCode3To1Map[lang3]})
     return translation;
 }
+
