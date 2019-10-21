@@ -149,6 +149,10 @@ class Room extends React.Component {
       if (winner !== null) this.addWave(winner)
       this.animateWaves(score);
 
+
+      // victory animation
+      const dir = winner === 1 ? 'right' : 'left';
+
       setTimeout(() => {
         this.setState({
           [`avatarP${winner}Style`]: { zIndex: 3 },
@@ -160,9 +164,9 @@ class Room extends React.Component {
           this.setState({
             victory: 
             <div id='victory-container'>
-              <div className='victory-item' style={{color:'#0ebfc2', left: '0vw'}}>VICTORY</div>
-              <div className='victory-item' style={{color:'#9f2cad', left: '10vw'}}>VICTORY</div>
-              <div className='victory-item' style={{color:'yellow', left: '20vw'}}>VICTORY</div>
+              <div className='victory-item' style={{color:'#0ebfc2', textAlign: dir, [dir]: '0vw'}}>VICTORY</div>
+              <div className='victory-item' style={{color:'#9f2cad', textAlign: dir, [dir]: '10vw'}}>VICTORY</div>
+              <div className='victory-item' style={{color:'yellow', textAlign: dir, [dir]: '20vw'}}>VICTORY</div>
             </div>
           })
          }, 1500);
