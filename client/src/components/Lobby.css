@@ -6,6 +6,10 @@ html, body {
     overflow: hidden;
 }
 
+body.modal-open {
+    padding-right: 0 !important
+}
+
 #background {
     position: absolute;
     z-index: -1;
