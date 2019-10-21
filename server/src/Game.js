@@ -66,7 +66,10 @@ function nextRound(io, room) {
 }
 
 function testGuess(answer, guess, lang) {
-    const punctuation = ",.?！ 。？，\"“”";
+    const engPunc = ',.?！;:"“”'
+    const cmnPunc = '， 。？！；：《》'
+    const spaPunc = '¿¡'
+    const punctuation = engPunc + cmnPunc + spaPunc;
 
     let htmlAnswer = '';
     let points = 0;
