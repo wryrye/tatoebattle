@@ -115,7 +115,8 @@ img {
 }
 
 .borderless {
-    border: none
+    border: none;
+    border-radius: 1.25em;
 }
 
 .flexing {
