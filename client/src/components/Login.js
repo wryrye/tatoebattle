@@ -81,7 +81,7 @@ class Login extends React.Component {
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h3 className="modal-title" id="exampleModalLongTitle">Register</h3>
+              <h3 className="modal-title" id="exampleModalLongTitle">Profile</h3>
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -107,7 +107,7 @@ class Login extends React.Component {
               </div>
             </div>
             <div className="modal-footer">
-              <button id="save" type="button" className="btn btn-primary" onClick={this.handleSave} >保存</button>
+              <button id="save" type="button" className="btn btn-primary" onClick={this.handleSave} >Save</button>
             </div>
           </div>
         </div>
