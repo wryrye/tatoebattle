@@ -9,11 +9,11 @@ module.exports = function (io, socket, lang) {
 
     (() => {
         for (let [room, info] of Object.entries(Game.roomMap)) {
-            if (info.occupancy < 2) {
+            if (info.occupancy < 2 && (info.lang == null || info.lang == lang)) {
+                info.lang = lang;
                 socket.join(room);
                 console.log(green, `Client ${socket.id} has joined ${room}`)
                 socket.emit('accept-join', { room: room, player: ++info.occupancy });
-                info.lang = lang;
                 return;
             }
         }
