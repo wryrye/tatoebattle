@@ -32,7 +32,8 @@ module.exports = {
     nextRound,
     testGuess,
     resetRoom,
-    resetRound
+    resetRound,
+    disconnect
 }
 
 // helper functions
@@ -41,17 +42,16 @@ function startGame(io, room) {
     nextRound(io, room);
 
     // end game if no heartbeat
-    let heartbeat = setInterval(function ping() {
-        roomMap[room].players.forEach((player) => {
-            if (player.uname === "google" ||
-                player.uname === "baidu") return;
-            if (!io.connected[player.socket]) {
-                io.to(room).emit('disconnect');
-                resetRoom(room);
-                clearInterval(heartbeat);
-            }
-        });
-    }, 15000);
+    // let heartbeat = setInterval(function ping() {
+    //     roomMap[room].players.forEach((player) => {
+    //         if (player.uname === "google" ||
+    //             player.uname === "baidu") return;
+    //         if (!io.connected[player.socket]) {
+    //             clearInterval(heartbeat);
+    //             disconnect(room);
+    //         }
+    //     });
+    // }, 15000);
 }
 
 function nextRound(io, room) {
@@ -133,6 +133,12 @@ function testGuess(answer, guess, lang) {
 
 function colorChar(color, char) {
     return `<span style = "color:#${color};">${char}</span>`;
+}
+
+function disconnect(io, room) {
+    console.log(`Disconnecting ${room}...`)
+    io.to(room).emit('disconnect');
+    resetRoom(room);
 }
 
 function resetRoom(room) {

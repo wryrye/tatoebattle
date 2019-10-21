@@ -7,6 +7,8 @@ const Game = require('./Game.js');
 
 module.exports = function (io, socket, company, lang) {
 
+    let currentRoom = null;
+
     (() => {
         for (let [room, info] of Object.entries(Game.roomMap)) {
             if (info.occupancy === 0) {
@@ -25,9 +27,11 @@ module.exports = function (io, socket, company, lang) {
 
 
     // start game when both players ready
-    socket.on('ready-start', function (data) {
+    socket.on('ready-start', (data) => {
         const { room, player } = data;
         const roomInfo = Game.roomMap[room];
+
+        currentRoom = room;
 
         console.log(green, `Client ${socket.id} in ${room} is ready`)
         console.log(green, `Client ${company} in ${room} is ready`)
@@ -103,8 +107,9 @@ module.exports = function (io, socket, company, lang) {
         })
     });
 
-    socket.on('disconnect', function (socket) {
-        console.log(red, `Someone has disconnected`)
+    socket.on('disconnect', (socket) => {
+        console.log(red, `Client ${socket.id} has disconnected`)
+        Game.disconnect(io, currentRoom);
     });
 }
 
