@@ -43,6 +43,7 @@ class Room extends React.Component {
       avatarP2Style: null,
       wrapperStyle: null,
       circleClass: null,
+      victory: null,
     }
 
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -155,8 +156,19 @@ class Room extends React.Component {
           circleClass: 'active'
         })
 
-        setTimeout(function () { window.location.replace("/lobby/"); }, 4000);
-      }, 2000);
+        setTimeout(() => { 
+          this.setState({
+            victory: 
+            <div id='victory-container'>
+              <div className='victory-item' style={{color:'#0ebfc2', left: '0vw'}}>VICTORY</div>
+              <div className='victory-item' style={{color:'#9f2cad', left: '10vw'}}>VICTORY</div>
+              <div className='victory-item' style={{color:'yellow', left: '20vw'}}>VICTORY</div>
+            </div>
+          })
+         }, 1500);
+
+        setTimeout(() => { window.location.replace("/lobby/"); }, 5000);
+      }, 3000);
 
     });
 
@@ -326,6 +338,8 @@ class Room extends React.Component {
             </span>
           </div>
         </div>
+
+        {this.state.victory}
       </div>
     );
   }

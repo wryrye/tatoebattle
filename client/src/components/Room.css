@@ -28,11 +28,7 @@
 #room-name {
     position: relative;
     font-size: 6em;
-    text-shadow: 
-        red -10px 0 10px, 
-        yellow 0 10px 10px, 
-        blue 10px 0 10px, 
-        purple 0 -10px 10px;
+    text-shadow: red -10px 0 10px, yellow 0 10px 10px, blue 10px 0 10px, purple 0 -10px 10px;
     font-weight: bold;
     width: 100%;
     text-align: center;
@@ -67,11 +63,7 @@
     width: 100%;
     overflow: hidden;
     color: white;
-    text-shadow: 
-        -1px 0 black, 
-        0 1px black, 
-        1px 0 black,
-        0 -1px black;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #eng-sent {
@@ -127,31 +119,73 @@
     animation-iteration-count: 1;
 }
 
+@-webkit-keyframes growUp {
+    0% {
+        -webkit-transform: scale(0);
+    }
+    100% {
+        -webkit-transform: scale(1);
+    }
+}
 
-@-webkit-keyframes growUp {   
-    0%  { -webkit-transform: scale(0); }
-    100% { -webkit-transform: scale(1); }
-  }
-  
-  @-moz-keyframes growUp {
-    0%  { -moz-transform: scale(0); }
-    100% { -moz-transform: scale(1); }
-  }
-  
-  @-o-keyframes growUp {
-    0%  { -o-transform: scale(0); }
-    100% { -o-transform: scale(1); }
-  }
-  
-  @-ms-keyframes growUp {
-    0%  { -ms-transform: scale(0); }
-    100% { -ms-transform: scale(1); }
-  }
-  
-  @keyframes growUp {
-    0%  { transform: scale(0); }
-    100% { transform: scale(1); }
-  }
+@-moz-keyframes growUp {
+    0% {
+        -moz-transform: scale(0);
+    }
+    100% {
+        -moz-transform: scale(1);
+    }
+}
+
+@-o-keyframes growUp {
+    0% {
+        -o-transform: scale(0);
+    }
+    100% {
+        -o-transform: scale(1);
+    }
+}
+
+@-ms-keyframes growUp {
+    0% {
+        -ms-transform: scale(0);
+    }
+    100% {
+        -ms-transform: scale(1);
+    }
+}
+
+@keyframes growUp {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes victory-animation {
+    from { height: 0%; }
+    to { height: 100%; }
+}
+
+#victory-container {
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    font-size: 10em;
+    font-weight: bold;
+    font-style: italic;
+    text-shadow: 5px 5px 5px red;
+
+    overflow: hidden;
+    animation: victory-animation steps(3, end) 500ms;
+}
+
+.victory-item {
+    position: relative;
+}
+
 
 /*--------------------------WAVE CSS-----------------------------------------------------------------------*/
 
