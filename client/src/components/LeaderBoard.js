@@ -5,7 +5,21 @@ import * as d3 from 'd3'
 
 class LeaderBoard extends React.Component {
 
-    componentDidMount() {
+    async componentDidMount() {
+        const rankData = await fetch(`http://localhost:${process.env.PORT || 5000}/lb`);
+        const rankJSON = await rankData.json();
+        console.log(JSON.stringify(rankJSON));
+
+        const leaderboard = rankJSON.map((item) => {
+            return {
+                name: item.user_id,
+                team: 'mercedes',
+                gap: item.total_wins,
+                score: item.total_score
+            }
+        })
+
+
         // array describing the color for each team
         // using camel case where the team names include a space
         const colors = {
@@ -20,109 +34,6 @@ class LeaderBoard extends React.Component {
             mclaren: '#FF8700',
             williams: '#FFFFFF'
         }
-
-        // array describing the drivers, sorted by position and with a gap describing the distance from the leading driver
-        const leaderboard = [
-            {
-                name: 'Lewis Hamilton',
-                team: 'mercedes',
-                gap: 'Leader'
-            },
-            {
-                name: 'Valteri Bottas',
-                team: 'mercedes',
-                gap: '+6.552s'
-            },
-            {
-                name: 'Sebastian Vettel',
-                team: 'ferrari',
-                gap: '+13.744s'
-            },
-            {
-                name: 'Max Verstappen',
-                team: 'red bull',
-                gap: '+27.627s'
-            },
-            {
-                name: 'Charles Leclerc',
-                team: 'ferrari',
-                gap: '+31.627s'
-            },
-            {
-                name: 'Pierre Gasly',
-                team: 'red bull',
-                gap: '+89.307s'
-            },
-            {
-                name: 'Daniel Ricciardo',
-                team: 'renault',
-                gap: '+1 lap'
-            }, {
-                name: 'Sergio Perez',
-                team: 'racing point',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Kimi Räikkönen',
-                team: 'alfa romeo',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Alexander Albon',
-                team: 'toro rosso',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Romain Grosjean',
-                team: 'haas',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Lance Stroll',
-                team: 'racing point',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Kevin Magnussen',
-                team: 'haas',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Carlos Sainz',
-                team: 'mclaren',
-                gap: '+1 lap'
-            },
-            {
-                name: 'Antonio Giovinazzi',
-                team: 'alfa romeo',
-                gap: '+1 lap'
-            },
-            {
-                name: 'George Russell',
-                team: 'williams',
-                gap: '+2 laps'
-            },
-            {
-                name: 'Robert Kubica',
-                team: 'williams',
-                gap: '+2 laps'
-            },
-            {
-                name: 'Lando Norris',
-                team: 'mclaren',
-                gap: 'DNF'
-            },
-            {
-                name: 'Daniil Kvyat',
-                team: 'toro rosso',
-                gap: 'DNF'
-            },
-            {
-                name: 'Nico Hulkenberg',
-                team: 'renault',
-                gap: 'DNF'
-            }
-        ];
 
         // target the table element in which to add one div for each driver
         const main = d3
@@ -170,6 +81,12 @@ class LeaderBoard extends React.Component {
             .attr('class', 'gap')
             .append('span')
             .text(({ gap }) => gap);
+
+        drivers
+            .append('td')
+            .attr('class', 'gap')
+            .append('span')
+            .text(({ score }) => score);
     }
 
     render() {
@@ -178,9 +95,10 @@ class LeaderBoard extends React.Component {
                 <table>
                     <tbody>
                         <tr>
-                            <th>Pos</th>
+                            <th>Rank</th>
                             <th>Player</th>
                             <th>Wins</th>
+                            <th>Points</th>
                         </tr>
                     </tbody>
                 </table>

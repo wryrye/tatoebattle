@@ -44,23 +44,26 @@ io.on('connection', function (socket) {
   });
 });
 
-const rank_query = `SELECT 
+const rankQuery = `SELECT 
 user_id,
 RANK () OVER (ORDER BY total_wins DESC) AS rank,
-total_wins
+total_wins,
+total_score
 FROM (
 SELECT 
     user_id,
-    SUM(CAST(win AS INT)) as total_wins
+    SUM(CAST(win AS INT)) as total_wins,
+    SUM(score) as total_score
 FROM 
     score_history
 GROUP BY user_id
 ORDER BY user_id ASC
 ) as myTableAlias
-ORDER BY user_id;`
+ORDER BY rank;`
 
 
 app.get('/lb', async (req, res) => {
-  const { rows } = await Postgres.query(rank_query)
-  res.send(rows[0]);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  const { rows } = await Postgres.query(rankQuery)
+  res.send(rows);
 })

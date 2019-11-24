@@ -34,30 +34,34 @@ ORDER BY user_id ASC;
 SELECT 
     user_id,
     RANK () OVER (ORDER BY total_wins DESC) AS rank,
-    total_wins
-FROM (
-    SELECT 
-        user_id,
-        SUM(CAST(win AS INT)) as total_wins
-    FROM 
-        score_history
-    GROUP BY user_id
-    ORDER BY user_id ASC
-) as myTableAlias
-ORDER BY user_id;
-
-
-SELECT 
-    user_id,
-    RANK () OVER (ORDER BY total_score DESC) AS rank,
+    total_wins,
     total_score
 FROM (
     SELECT 
         user_id,
+        SUM(CAST(win AS INT)) as total_wins,
         SUM(score) as total_score
     FROM 
         score_history
     GROUP BY user_id
     ORDER BY user_id ASC
 ) as myTableAlias
-ORDER BY user_id;
+ORDER BY rank;
+
+
+SELECT 
+    user_id,
+    total_wins,
+    RANK () OVER (ORDER BY total_score DESC) AS rank,
+    total_score
+FROM (
+    SELECT 
+        user_id,
+        SUM(CAST(win AS INT)) as total_wins,
+        SUM(score) as total_score
+    FROM 
+        score_history
+    GROUP BY user_id
+    ORDER BY user_id ASC
+) as myTableAlias
+ORDER BY rank;
