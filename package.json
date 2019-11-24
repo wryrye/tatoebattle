@@ -11,6 +11,7 @@
     "jquery": "^3.4.1",
     "jquery-textfill": "^0.6.0",
     "npm": "^6.11.3",
+    "pg": "^7.14.0",
     "popper.js": "^1.15.0",
     "query-string": "^6.8.3",
     "react": "^16.9.0",

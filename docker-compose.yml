@@ -1,5 +1,15 @@
 version: "3"
 services:
+  postgres:
+    build:
+      context: ./postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+
   redis:
     image: redis:alpine
     container_name: redis
@@ -28,6 +38,7 @@ services:
     command: bash -c "cd /app && npm run server"
     environment:
       - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://postgres:example@postgres:5432
       - GOOGLE_APPLICATION_CREDENTIALS=/app/server/auth/google-credentials.json
     depends_on:
       - python

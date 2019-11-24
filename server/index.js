@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const Postgres = require('./src/Postgres.js');
 
 const port = process.env.PORT || 5000;
 server.listen(port);
@@ -42,3 +43,24 @@ io.on('connection', function (socket) {
     }
   });
 });
+
+const rank_query = `SELECT 
+user_id,
+RANK () OVER (ORDER BY total_wins DESC) AS rank,
+total_wins
+FROM (
+SELECT 
+    user_id,
+    SUM(CAST(win AS INT)) as total_wins
+FROM 
+    score_history
+GROUP BY user_id
+ORDER BY user_id ASC
+) as myTableAlias
+ORDER BY user_id;`
+
+
+app.get('/lb', async (req, res) => {
+  const { rows } = await Postgres.query(rank_query)
+  res.send(rows[0]);
+})
