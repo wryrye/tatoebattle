@@ -118,7 +118,6 @@ class Room extends React.Component {
 
 
       if (!isFirst) {
-        console.log("here")
         this.setState({ answerText: answer })
 
         zhSent.parent().textfill({ maxFontPixels: 100 }); //fix  
@@ -346,6 +345,12 @@ class Room extends React.Component {
         {this.state.victory}
       </div>
     );
+  }
+
+  componentWillUnmount(){
+    const { socket } = this.props;
+    socket.removeAllListeners();
+    socket.disconnect();
   }
 }
 
