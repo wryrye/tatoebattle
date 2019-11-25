@@ -19,11 +19,23 @@ class About extends React.Component {
                 <p> Click "Profile" in the top right corner and choose a username, a language to learn, and an avatar. After saving, navigate to the lobby
                 (landing page) and click the "Play" button that appears when hovering over the desired game variant. Once the game starts, a random English
                 sentence is displayed and your goal is to translate it to the best of your abilities into the specified language. When you submit your guess,
-                you will receive visual feedback that indicates which words/characters you guessed correctly and those you missed. You will receive one point
-                for each word/character guessed incorrectly. Earn enough points and you will triumph over you opponent in this exhilerating reverse tug-of-war!</p>
-                <b>Random Mode</b><p>Play against another random netizen (must wait for other user to join before game begins).</p>
-                <b>Company Mode</b><p>Put your skills to the test against established translation services.</p>
-                <b>Practice Mode</b>&nbsp;<i>(Coming soon!)</i><p>No points, no score, just practice.</p>
+                you will receive visual feedback that indicates which words/characters you guessed correctly and those you missed. You will receive points based
+                on your performance. Earn enough points and you will triumph over your opponent in this exhilarating reverse tug-of-war! </p>
+                
+                <h4>Scoring</h4>
+                <ul>
+                    <li><b>Correctness: </b>+1 point for each word/character translated correctly</li>
+                    <li><b>First Strike: </b>+1 point for the player that submits first</li>
+                    <li><b>Streak: </b>+1 point if the player won the previous round <i>(Coming soon!)</i></li>
+                </ul>
+
+                <h4>Modes</h4>
+                <ul>
+                    <li><b>Random: </b>Play against another random netizen (must wait for other user to join before game begins).</li>
+                    <li><b>Company: </b>Put your skills to the test against established translation services.</li>
+                    <li><b>Practice: </b>No points, no score, just practice. <i>(Coming soon!)</i></li> 
+                </ul>
+
 
                 <h1>What do we do with your data?</h1>
                 A username is requested merely to track score history and populate the leaderboards!

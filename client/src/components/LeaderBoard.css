@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Rubik:300,400,500');
 
-* {
+/* * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
+} */
 .leaderboard {
   /* border-top: 4px solid #DC0000; */
   /* background: #15151E; */
