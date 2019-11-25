@@ -17,9 +17,9 @@ class Lobby extends React.Component {
   componentDidMount() {
     const { socket, userInfo, updateInfo, history } = this.props;
 
-    if (userInfo === undefined) {
-      $('#login').modal('show');
-    }
+    // if (userInfo === undefined) {
+    //   $('#login').modal('show');
+    // }
 
     socket.connect();
 

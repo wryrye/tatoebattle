@@ -7,16 +7,26 @@ class About extends React.Component {
     render() {
 
         return (
-            <div className='container'>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus egestas risus, in sollicitudin erat hendrerit eget. Curabitur nec diam felis. Duis risus elit, iaculis sed mattis eget, tincidunt nec odio. Etiam gravida, nunc vel lobortis molestie, nisl augue convallis dolor, non feugiat nisi ex elementum justo. Cras at lacus id justo porta blandit sit amet sed ipsum. Maecenas quis suscipit ipsum. Vivamus at eleifend nulla, vel commodo nisl. Vestibulum egestas interdum tortor, ac facilisis eros suscipit consectetur. Vivamus ante massa, ullamcorper quis mattis in, aliquam eget leo. Aliquam in varius neque.
-                
-                Duis pretium, mauris id pretium malesuada, orci est viverra mi, quis interdum sem purus et sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel magna quis nisi aliquam elementum ac eget felis. Quisque a euismod mauris, at imperdiet odio. In hac habitasse platea dictumst. Sed at nulla in massa sagittis posuere eget id ligula. Praesent et luctus ante. Integer accumsan finibus nunc sed dignissim. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent fringilla aliquet lacus dapibus feugiat. Suspendisse a nibh venenatis erat laoreet suscipit.
-                
-                Sed convallis velit metus, eu consequat leo ultrices non. Donec finibus sodales iaculis. Maecenas facilisis turpis nibh, ultrices feugiat velit sodales ut. Nulla ut porta est, eu tempus risus. Pellentesque eget blandit arcu, vel dignissim arcu. Praesent orci ante, dictum et feugiat ut, tempus et ex. Vestibulum fringilla velit nec varius dictum. Aliquam erat volutpat. Nam auctor tortor nibh, sit amet posuere dui vehicula vel. Nam at lacus consectetur, maximus dolor eu, commodo lorem.
-                
-                Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec tristique enim nec ipsum semper hendrerit. Suspendisse et dolor quis lectus dapibus gravida. Praesent scelerisque purus nec nisl tincidunt consectetur a id urna. Phasellus faucibus, libero ac faucibus fringilla, lorem nisl semper felis, id euismod felis nisi at turpis. Quisque augue lacus, feugiat non massa vitae, dictum feugiat ex. Sed massa erat, dignissim rutrum porta eget, venenatis id libero. Vestibulum auctor lobortis mi vel imperdiet. Quisque sollicitudin aliquam sollicitudin. Curabitur est odio, rhoncus et nibh ut, pellentesque molestie neque. Integer sed iaculis turpis, quis sodales lorem. Donec lacus dolor, cursus et sagittis id, luctus ut libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum id massa sed nulla dictum ultrices eu ac nisi.
-                
-                Maecenas molestie at nisi eget lobortis. Curabitur dictum rhoncus risus, nec porttitor augue tempus vitae. Aenean ipsum orci, volutpat in est non, faucibus volutpat lectus. Morbi tempor consequat neque, et iaculis enim rhoncus ut. Integer fringilla nulla sed faucibus dignissim. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer blandit risus vitae ex lobortis scelerisque.
+            <div id='about' className='container my-4'>
+                <h1>What is TatoeBattle?</h1>
+                <p>TatoeBattle is a language learning game that aims to teach students the meaning and usage of words through the context of complete sentences.
+                Once in a game, the app provides random sentences in English and contestants are pitted against each other in trying to come up with the most
+                accurate translation for a specified language. This provides users a good opppurtunity to draw upon what they already know as well as see how
+                unknown words are used and in what contexts - all in a stimulating, gamified environment!</p>
+                <p>Sentences are sourced from <b>Tatoeba</b>, a free collaborative online database of example sentences geared towards foreign language learners. </p>
+
+                <h1>How do I play?</h1>
+                <p> Click "Profile" in the top right corner and choose a username, a language to learn, and an avatar. After saving, navigate to the lobby
+                (landing page) and click the "Play" button that appears when hovering over the desired game variant. Once the game starts, a random English
+                sentence is displayed and your goal is to translate it to the best of your abilities into the specified language. When you submit your guess,
+                you will receive visual feedback that indicates which words/characters you guessed correctly and those you missed. You will receive one point
+                for each word/character guessed incorrectly. Earn enough points and you will triumph over you opponent in this exhilerating reverse tug-of-war!</p>
+                <b>Random Mode</b><p>Play against another random netizen (must wait for other user to join before game begins).</p>
+                <b>Company Mode</b><p>Put your skills to the test against established translation services.</p>
+                <b>Practice Mode</b>&nbsp;<i>(Coming soon!)</i><p>No points, no score, just practice.</p>
+
+                <h1>What do we do with your data?</h1>
+                A username is requested merely to track score history and populate the leaderboards!
             </div>
         );
     }

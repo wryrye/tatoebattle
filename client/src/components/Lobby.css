@@ -3,7 +3,7 @@ html, body {
     height: 100%;
     background: #4caf4f;
     font-size: 2vh;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 body.modal-open {
