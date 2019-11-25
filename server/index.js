@@ -40,6 +40,9 @@ io.on('connection', function (socket) {
       case 'baidu':
         companyMode(this, socket, mode, lang);
         break;
+      case 'spanishDict':
+        companyMode(this, socket, mode, lang);
+        break;
     }
   });
 });

@@ -107,14 +107,14 @@ class Lobby extends React.Component {
                   </div>
                   <div className="col-sm-4 my-4">
                     <div className="wrapper h-100">
-                      <img className="card-img logo" src="/assets/images/baidu2.png" alt="" />
+                      <img className="card-img logo" src="/assets/images/spanishDict2.png" alt="" />
                       <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
                         <div className="card-block h-100 flexing">
                           <div className="flexible">
-                            <h3 className="card-title">Baidu</h3>
-                            <p className="card-text">Play against Baidu</p>
+                            <h3 className="card-title">SpanishDict</h3>
+                            <p className="card-text">Play against SpanishDict</p>
                           </div>
-                          <button id="baidu" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
+                          <button id="spanishDict" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                         </div>
                       </div>
                     </div>

@@ -74,7 +74,21 @@ module.exports = function (io, socket, company, lang) {
 
         // company guess
         const timeStart = process.hrtime()
-        const companyTranslate = company === 'google' ? googleTranslate : baiduTranslate;
+
+        let companyTranslate;
+        switch(company) {
+            case('google'):
+                companyTranslate = googleTranslate;
+                break;
+            case('baidu'):
+                companyTranslate = baiduTranslate;
+                break;
+            case('spanishDict'):
+                console.log("curiosity prevails!")
+                companyTranslate = sdTranslate;
+                break;
+        }
+
         const companyGuess = await companyTranslate(roundInfo.question, roomInfo.lang);
         let { points: companyPoints } = Game.testGuess(roundInfo.answer, companyGuess, roomInfo.lang);
         roundInfo.score -= companyPoints;
@@ -140,3 +154,10 @@ async function baiduTranslate(text, lang3) {
     return translation;
 }
 
+// spanishDict
+const axios = require('axios');
+
+async function sdTranslate(text, lang3) {
+    const response = await axios.get(`http://translate1.spanishdict.com/dictionary/translation_prompt?lang_from=en&trtext=${text}`);
+    return response.data.results;
+}
