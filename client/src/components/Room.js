@@ -57,7 +57,6 @@ class Room extends React.Component {
       let queryString = this.props.location.search;
       let queryObject = queryParser.parse(queryString);
       this.props = queryObject;
-      console.log(this.props);
     }
 
     var zhSent = $('#chin-sent'); // fix
@@ -115,8 +114,6 @@ class Room extends React.Component {
 
     socket.on('final', (data) => {
       const { answer, winner, score } = data;
-      console.log(data)
-
 
       if (!isFirst) {
         this.setState({ answerText: answer })

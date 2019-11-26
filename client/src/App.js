@@ -23,6 +23,9 @@ class App extends React.Component {
       userInfo: this.cookies.get('userInfo')
     }
 
+    console.log(process.env.REACT_APP_SOCKET);
+    console.log(process.env.PORT);
+
     this.socket = socketClient(process.env.REACT_APP_SOCKET);
 
     this.socket.on('connect', () => {
