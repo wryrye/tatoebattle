@@ -105,7 +105,7 @@ class Lobby extends React.Component {
                       </div>
                     </div>
                   </div>
-                  {this.props.userInfo.language === 'spa' ? (
+                  {this.props.userInfo !== undefined && this.props.userInfo.language === 'spa' ? (
                     <div className="col-sm-4 my-4">
                       <div className="wrapper h-100">
                         <img className="card-img logo" src="/assets/images/spanishDict2.png" alt="" />
