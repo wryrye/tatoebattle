@@ -74,11 +74,11 @@ function testGuess(answer, guess, lang) {
     let htmlAnswer = '';
     let points = 0;
 
+    console.log("Guess: " + guess)
+    console.log("Answer: " + answer)
+
     switch (lang) {
         case 'cmn': {
-            console.log("guess: " + guess)
-            console.log("answer: " + answer)
-
             for (let char of answer) {
                 // punctuation
                 if (punctuation.indexOf(char) != -1) {
@@ -98,33 +98,42 @@ function testGuess(answer, guess, lang) {
             break;
         }
         case 'spa': {
-            guess = guess.split(/([-,.\s])/);
-            guess = guess.map((x) => { return x.toLowerCase() })
+            const regExp = new RegExp(`([${punctuation}\\s])`);
 
-            answer = answer.split(/([-,.\s])/);
+            const normGuess = guess.normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .split(regExp);
+
+            const normAnswer = answer.normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .split(regExp);
+
+            const origAnswer = answer.split(regExp);
             htmlAnswer = []
 
-            console.log("guess: " + guess)
-            console.log("answer: " + answer)
+            for (let x = 0; x < normAnswer.length; x++) {
+                const normWord = normAnswer[x];
+                const origWord = origAnswer[x];
 
-            answer.forEach(word => {
                 let index = null;
 
                 // punctuation
-                if ((index = punctuation.indexOf(word.toLowerCase()) != -1)) {
-                    htmlAnswer.push(colorChar('000000', word)) // black
-                    return;
+                if ((index = punctuation.indexOf(normWord) != -1)) {
+                    htmlAnswer.push(colorChar('000000', origWord)) // black
+                    continue;
                 }
                 // incorrect
-                if ((index = guess.indexOf(word.toLowerCase()) == -1)) {
-                    htmlAnswer.push(colorChar('ff0000', word)); // red
-                    return;
+                if ((index = normGuess.indexOf(normWord) == -1)) {
+                    htmlAnswer.push(colorChar('ff0000', origWord)); // red
+                    continue;
                 }
                 // correct
-                htmlAnswer.push(colorChar('7cfc00', word)); // green
-                guess.splice(index,1)
+                htmlAnswer.push(colorChar('7cfc00', origWord)); // green
+                normGuess.splice(index,1)
                 points++;
-            });
+            }
 
             htmlAnswer = htmlAnswer.join('');
             break;

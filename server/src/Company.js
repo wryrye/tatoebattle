@@ -84,7 +84,6 @@ module.exports = function (io, socket, company, lang) {
                 companyTranslate = baiduTranslate;
                 break;
             case('spanishDict'):
-                console.log("curiosity prevails!")
                 companyTranslate = sdTranslate;
                 break;
         }
