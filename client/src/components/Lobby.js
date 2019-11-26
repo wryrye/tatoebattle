@@ -21,6 +21,8 @@ class Lobby extends React.Component {
     //   $('#login').modal('show');
     // }
 
+    console.log(userInfo);
+
     socket.connect();
 
     socket.on('accept-join', (data) => {
@@ -65,7 +67,7 @@ class Lobby extends React.Component {
               </ul>
             </div>
             <ul className="navbar-nav mr-auto">
-              <li><a href="#myModal" data-toggle = "modal" data-target= "#login" className="nav-link">Profile</a></li>
+              <li><a href="#myModal" data-toggle="modal" data-target="#login" className="nav-link">Profile</a></li>
             </ul>
           </div>
         </nav>
@@ -105,20 +107,37 @@ class Lobby extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className="col-sm-4 my-4">
-                    <div className="wrapper h-100">
-                      <img className="card-img logo" src="/assets/images/spanishDict2.png" alt="" />
-                      <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
-                        <div className="card-block h-100 flexing">
-                          <div className="flexible">
-                            <h3 className="card-title">SpanishDict</h3>
-                            <p className="card-text">Play against SpanishDict</p>
+                  {this.props.userInfo.language === 'spa' ? (
+                    <div className="col-sm-4 my-4">
+                      <div className="wrapper h-100">
+                        <img className="card-img logo" src="/assets/images/spanishDict2.png" alt="" />
+                        <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
+                          <div className="card-block h-100 flexing">
+                            <div className="flexible">
+                              <h3 className="card-title">SpanishDict</h3>
+                              <p className="card-text">Play against SpanishDict</p>
+                            </div>
+                            <button id="spanishDict" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                           </div>
-                          <button id="spanishDict" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="col-sm-4 my-4">
+                      <div className="wrapper h-100">
+                        <img className="card-img logo" src="/assets/images/baidu2.png" alt="" />
+                        <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
+                          <div className="card-block h-100 flexing">
+                            <div className="flexible">
+                              <h3 className="card-title">Baidu</h3>
+                              <p className="card-text">Play against Baidu</p>
+                            </div>
+                            <button id="baidu" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
