@@ -4,6 +4,7 @@ const magenta = "\x1b[35m";
 const cyan = "\x1b[36m";
 
 const Game = require('./Game.js');
+const Postgres = require('./Postgres.js');
 
 module.exports = function (io, socket, lang) {
 
@@ -82,9 +83,21 @@ module.exports = function (io, socket, lang) {
                 io.to(room).emit('final', { answer: htmlAnswer, score, winner });
                 Game.resetRound(room)
             } else { // winning score has been reached, game over!
-                console.log(cyan, `Player ${winner} has won!`)
+                const winner = score >= 10 ? 1 : 2;
+                const winnerInfo = roomInfo.players[winner - 1];
+
+                const loser = score >= 10 ? 2 : 1;
+                const loserInfo = roomInfo.players[loser - 1];
+
+                console.log(cyan, `Player ${winnerInfo.uname} has won!`)
                 io.to(room).emit('game-over', { answer: htmlAnswer, score, winner });
                 Game.resetRoom(room);
+
+                const matchQuery = `INSERT INTO score_history (user_id, win, score) VALUES 
+                ('${winnerInfo.uname}', B'1', ${Math.floor(Math.random() * 100)}),
+                ('${loserInfo.uname}', B'0', ${Math.floor(Math.random() * 100)});`;
+
+                Postgres.query(matchQuery)
             }
         }
     });

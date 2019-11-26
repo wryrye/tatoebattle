@@ -25,7 +25,7 @@ class Login extends React.Component {
   componentDidMount() {
     // update from props on show
     $('#login').on('show.bs.modal', (e) => {
-      if (this.props.userInfo != undefined) {
+      if (this.props.userInfo !== undefined) {
         this.setState({ ...this.props.userInfo })
       }
     });

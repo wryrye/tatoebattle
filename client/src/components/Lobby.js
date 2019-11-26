@@ -21,8 +21,6 @@ class Lobby extends React.Component {
     //   $('#login').modal('show');
     // }
 
-    console.log(userInfo);
-
     socket.connect();
 
     socket.on('accept-join', (data) => {

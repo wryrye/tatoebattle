@@ -51,7 +51,7 @@ class Room extends React.Component {
   }
 
   componentDidMount() {
-    const { socket, room, player, master } = this.props;
+    const { socket, room, player, master, username } = this.props;
 
     if (!room || !player || !master) {
       let queryString = this.props.location.search;
@@ -75,6 +75,7 @@ class Room extends React.Component {
         'master': master,
         'socket': socket.id,
         'player': player,
+        'uname': username,
       }
     }
 
