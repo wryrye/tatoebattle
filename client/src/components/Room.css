@@ -1,5 +1,7 @@
 #room {
-    background: #4d6aa7
+    background: #4d6aa7;
+    position: relative;
+    overflow: hidden;
 }
 
 @keyframes ellipsis {
