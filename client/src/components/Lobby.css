@@ -40,7 +40,7 @@ body.modal-open {
 html {
     position: inherit;
     height: 100%;
-    font-size: 15px;
+    /* font-size: 15px; */
 }
 
 body {

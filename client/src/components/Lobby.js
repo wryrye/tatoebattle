@@ -45,15 +45,15 @@ class Lobby extends React.Component {
     return (
       <div id="lobby" className="HolyGrail">
         <Login {...this.props} />
-        <nav id="nav-wrapper" className="navbar navbar-expand-md bg-gray">
+        <nav id="nav-wrapper" className="navbar navbar-expand-sm navbar-dark bg-gray">
           <div id="nav-container" className="container">
             <div>
               <img id="nav-logo" src="/assets/images/tatoebattle.png" width="48" height="48" title="Tatoeba" alt="" />
               <Link id="nav-brand" className="navbar-brand" to={match.url}>TatoeBattle</Link>
-              <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button>
             </div>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
             <div className="collapse navbar-collapse" id="navbarsExampleDefault">
               <ul className="navbar-nav mr-auto">
                 <li className="nav-item">
@@ -63,10 +63,11 @@ class Lobby extends React.Component {
                   <Link className="nav-link" to={`${match.url}/leader-board`}>LeaderBoard</Link>
                 </li>
               </ul>
+              <div class="dropdown-divider"></div>
+              <ul className="navbar-nav">
+                <li><a href="#myModal" data-toggle="modal" data-target="#login" className="nav-link">Profile</a></li>
+              </ul>
             </div>
-            <ul className="navbar-nav mr-auto">
-              <li><a href="#myModal" data-toggle="modal" data-target="#login" className="nav-link">Profile</a></li>
-            </ul>
           </div>
         </nav>
 
@@ -121,21 +122,21 @@ class Lobby extends React.Component {
                       </div>
                     </div>
                   ) : (
-                    <div className="col-sm-4 my-4">
-                      <div className="wrapper h-100">
-                        <img className="card-img logo" src="/assets/images/baidu2.png" alt="" />
-                        <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
-                          <div className="card-block h-100 flexing">
-                            <div className="flexible">
-                              <h3 className="card-title">Baidu</h3>
-                              <p className="card-text">Play against Baidu</p>
+                      <div className="col-sm-4 my-4">
+                        <div className="wrapper h-100">
+                          <img className="card-img logo" src="/assets/images/baidu2.png" alt="" />
+                          <div className="card p-4 h-100 borderless" style={{ width: "100%" }}>
+                            <div className="card-block h-100 flexing">
+                              <div className="flexible">
+                                <h3 className="card-title">Baidu</h3>
+                                <p className="card-text">Play against Baidu</p>
+                              </div>
+                              <button id="baidu" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                             </div>
-                            <button id="baidu" className="battle btn btn-primary hidden big-text" onClick={this.handlePlay}>PLAY</button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             </div>
