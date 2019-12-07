@@ -1,8 +1,14 @@
 TatoeBattle
 
 Heroku:
-- Add Node and Python buildpacks
-- Add Redis add-on
+- Add buildpacks
+    - Node
+    - Python
+- Add add-ons:
+    - Redis
+    - Postgres
+    - New Relic APM
+        - Configure Synthetic Monitor
 - Add "ECOSYSTEM=HEROKU" config var
 - Run commands in Heroku CLI:
     $ heroku config:set -a tatoebattle GOOGLE_CREDENTIALS_JSON="$(< $JSON_PATH)"

@@ -8,8 +8,7 @@ class LeaderBoard extends React.Component {
     async componentDidMount() {
         const rankData = await fetch('/lb');
         const rankJSON = await rankData.json();
-        console.log(JSON.stringify(rankJSON));
-
+        
         const leaderboard = rankJSON.map((item) => {
             return {
                 name: item.user_id,
@@ -72,7 +71,6 @@ class LeaderBoard extends React.Component {
                 // find the color using the string value found in d.team
                 // ! if the string value has a space, camelCase the value
                 // const color = team.split(' ').map((word, index) => index > 0 ? `${word[0].toUpperCase()}${word.slice(1)}` : `${word}`).join('');
-                console.log(rank)
                 return `4px solid ${colors[rank % colors.length]}`;
             })
             .attr('class', 'driver');
